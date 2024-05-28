@@ -44,7 +44,7 @@ def _get_comments(submission: Submission) -> list:
         comment_no_punc = comment_lower.replace(string.punctuation, '')
         if any(keyword in comment_no_punc for keyword in ALL_KEYWORDS) and (any(phrase in comment_no_punc for phrase in PHRASES) or
             any(indicator in comment_no_punc for indicator in OPINION_INDICATORS)):
-            comments.extend(comment.body.split('\n\n'))
+            comments.extend(comment_no_punc.split('\n\n'))
     return comments
 
 # Usage example
