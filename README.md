@@ -24,22 +24,21 @@ PASSWORD=YOUR_PASSWORD
 ```
 
 5. Add the system path of the parent project directory to your PYTHONPATH in your shell profile. Zsh is typically ~/.zshrc, while Bash is typically ~/.bash_profile or ~/.bashrc.
-Replace "~/.zshrc" with the equivalent bash commands.
+Replace ~/.zshrc with the equivalent bash commands.
 
-### ~/.zshrc example
 
-Open the shell profile.
+5a. Open the shell profile.
 ```
 sudo nano ~/.zshrc
 ```
 
-Add the directory to your PYTHONPATH.
+5b. Add the directory to your PYTHONPATH.
 
 ```
 export PYTHONPATH="/path/to/your/project"
 ```
 
-Save the file and exit the text editor. Then, run source ~/.zshrc to apply the change.
+5c. Save the file and exit the text editor. Then, run source ~/.zshrc to apply the change.
 
 ```
 source ~/.zshrc
