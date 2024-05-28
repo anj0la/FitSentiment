@@ -1,24 +1,11 @@
 # Import statements
-import praw
-import os
-from dotenv import load_dotenv
-from constants import KEYWORDS, SUBREDDITS
-
-# Load environment variables from .env file
-load_dotenv()
-
-# Authenticating with Reddit
-reddit = praw.Reddit(
-    client_id=os.getenv('CLIENT_ID'),
-    client_secret=os.getenv('CLIENT_SECRET'),
-    username=os.getenv('USERNAME'),
-    password=os.getenv('PASSWORD'),
-    user_agent="reddit scraper",
-)
+from connector import connect_to_reddit
+from utils.constants import KEYWORDS, SUBREDDITS
 
 # Functions to scrape posts and comments
 def scrape_comments(limit):
     all_comments = [] # creates the training corpus
+    reddit = connect_to_reddit() # connect to the reddit api
     for subreddit in SUBREDDITS:
         subreddit_instance = reddit.subreddit(subreddit)
         for submission in subreddit_instance.hot(limit=limit):
@@ -40,7 +27,7 @@ def _get_comments(submission):
     return comments
 
 # Usage example
-corpus = scrape_comments(limit=50)
+corpus = scrape_comments(limit=1)
 # print('corpus: ', corpus)
 print('corpus length: ', len(corpus))
 
