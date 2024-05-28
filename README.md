@@ -17,8 +17,8 @@ pip install -r requirements.txt
 
 4. Create an .env file, and paste the following code into the file, replacing the text with your secrets.
 ``` 
-    CLIENT_ID=YOUR_CLIENT_ID
-    CLIENT_SECRET=YOUR_CLIENT_SECRET
-    USERNAME=YOUR_USERNAME
-    PASSWORD=YOUR_PASSWORD
+CLIENT_ID=YOUR_CLIENT_ID
+CLIENT_SECRET=YOUR_CLIENT_SECRET
+USERNAME=YOUR_USERNAME
+PASSWORD=YOUR_PASSWORD
 ```
