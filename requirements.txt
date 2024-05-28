@@ -1,0 +1,7 @@
+praw
+nltk
+numpy
+torch
+pandas
+scikit-learn
+python-dotenv
