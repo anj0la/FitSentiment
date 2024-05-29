@@ -1,12 +1,25 @@
-# Import statements
+"""
+File: reddit_scraper.py
+
+Author: Anjola Aina
+Date Modified: May 29th, 2024
+
+Description:
+    This file contains all the necessary functions used to scrape relevant information from Reddit.
+    There is one public function, scrape_comments, which uses a private function to grab comments from a specific submission (i.e., post) from a subreddit.
+
+Functions:
+    scrape_comments(int) -> list: Scrapes comments from specific subredits that are focused on workout splits.
+
+Sources: N/A
+"""
 from praw import models
 from connector import connect_to_reddit
-from utils.constants import SUBREDDITS, SEARCH_QUERIES
-from utils.constants import REDDIT_SCRAPER_CONSTANTS
+from constants.constants import REDDIT_SCRAPER_CONSTANTS
 
 def scrape_comments(limit: int) -> list:
     """
-    Scrapes comments from specific subreddits focused on workouts.
+    Scrapes comments from specific subreddits focused on workout splits.
 
     Args:
         limit (int): The number of submissions (maximum limit = 1000).
@@ -42,7 +55,7 @@ def _get_comments(submission: models.Submission) -> list:
         comments.extend(comment.body.split('\n\n'))
     return comments
 
-# Usage example
+# Usage example (TODO: delete later)
 corpus = scrape_comments(limit=5)
 # print('corpus: ', corpus)
 print('corpus length: ', len(corpus))
