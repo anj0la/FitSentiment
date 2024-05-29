@@ -11,8 +11,6 @@ Description:
 
 Classes:
     REDDIT_SCRAPER_CONSTANTS: All constants related to scraping relevant information from reddit.
-
-Sources: N/A
 """
 from dataclasses import dataclass
 

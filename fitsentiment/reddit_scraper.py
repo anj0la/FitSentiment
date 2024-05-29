@@ -10,11 +10,9 @@ Description:
 
 Functions:
     scrape_comments(int) -> list: Scrapes comments from specific subredits that are focused on workout splits.
-
-Sources: N/A
 """
 from praw import models
-from connector import connect_to_reddit
+from fitsentiment.connector import connect_to_reddit
 from constants.constants import REDDIT_SCRAPER_CONSTANTS
 
 def scrape_comments(limit: int) -> list:
