@@ -1,1 +1,1 @@
-from ..constants import constants
+from .connector import connect_to_reddit
