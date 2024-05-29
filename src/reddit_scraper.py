@@ -39,16 +39,11 @@ def _get_comments(submission: Submission) -> list:
     comments = []
     submission.comments.replace_more(limit=None)
     for comment in submission.comments.list():
-        # removing not revelant comments (must be related to a workout split and/or specific splits such as push/pull/legs, upper/lower, full body)
-        comment_lower = comment.body.lower()
-        comment_no_punc = comment_lower.replace(string.punctuation, '')
-        if any(keyword in comment_no_punc for keyword in ALL_KEYWORDS) and (any(phrase in comment_no_punc for phrase in PHRASES) or
-            any(indicator in comment_no_punc for indicator in OPINION_INDICATORS)):
-            comments.extend(comment_no_punc.split('\n\n'))
+        comments.extend(comment.body.split('\n\n'))
     return comments
 
 # Usage example
-corpus = scrape_comments(limit=1)
+corpus = scrape_comments(limit=10)
 # print('corpus: ', corpus)
 print('corpus length: ', len(corpus))
 print('print a subset of the corpus \n\n', corpus[0:3])
