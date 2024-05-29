@@ -6,7 +6,7 @@ with open('requirements.txt') as f:
 
 setup(
     name="FitSentiment",
-    version="0.1.0",
+    version="1.0",
     packages=find_packages(),
     include_package_data=True,
     install_requires=requirements,
