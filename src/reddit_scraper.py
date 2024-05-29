@@ -2,7 +2,7 @@
 import string
 from praw.models import Submission
 from connector import connect_to_reddit
-from utils.constants import ALL_KEYWORDS, OPINION_INDICATORS, PHRASES, SUBREDDITS, SEARCH_QUERIES
+from utils.constants import SUBREDDITS, SEARCH_QUERIES
 
 def scrape_comments(limit: int) -> list:
     """
@@ -43,7 +43,7 @@ def _get_comments(submission: Submission) -> list:
     return comments
 
 # Usage example
-corpus = scrape_comments(limit=10)
+corpus = scrape_comments(limit=5)
 # print('corpus: ', corpus)
 print('corpus length: ', len(corpus))
-print('print a subset of the corpus \n\n', corpus[0:3])
+print('print a subset of the corpus \n\n', corpus[180:200])
