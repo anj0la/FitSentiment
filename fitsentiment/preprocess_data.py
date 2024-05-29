@@ -1,7 +1,7 @@
 
 import re
 import pandas as pd
-from utils.constants import TEST_CORPUS
+from constants.constants import TEST_CORPUS
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize, sent_tokenize
