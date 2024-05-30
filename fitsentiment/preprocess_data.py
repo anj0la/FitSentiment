@@ -1,7 +1,6 @@
 import emoji
 import pandas as pd
 from nltk.corpus import stopwords
-from nltk.stem import WordNetLemmatizer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from nltk.tokenize import sent_tokenize, word_tokenize
 from utils.lemmatize_text import lemmatize_text
@@ -39,10 +38,15 @@ def preprocess_data(corpus: list[str]):
     stop_words = stopwords.words('english')
     data = data.apply(lambda sentence: ' '.join(word for word in sentence.split() if word not in stop_words))
     # applying lemmatization
-    word_net_lem = WordNetLemmatizer()
     data = data.apply(lambda sentence: lemmatize_text(sentence))
     
     return data.values
+
+def remove_punc_special_chars():
+    # removing punctuation from the corpus 
+    data = data.replace(r'[.,;:!\?"\'`]', '', regex=True)
+    # removing special characters from the corpus
+    data = data.replace(r'[@#\$%^&*\(\)\\/\+\-_=\\[\]\{\}<>]', '', regex=True)
 
 def tokenize_data(data) -> tuple[list, dict]:
     vectorizer = TfidfVectorizer()

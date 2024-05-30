@@ -36,7 +36,10 @@ class REDDIT_SCRAPER_CONSTANTS:
 
 # Regular Constants
 
-WORKOUT_KEYWORDS: tuple[str] = ('leg', 'chest', 'back', 'arm', 'shoulder', 'biceps', 'triceps', 'glute', 'gluteus maximus', 'gluteus medius', 
-                                    'quad', 'hamstring', 'calf', 'delts', 'front delts', 'side delts', 'rear delts', 'trap', 'lat', 'ab', 'abdominal', 
-                                    'ab', 'adductor', 'abductor', 'forearm', 'oblique', 'core', 'pecs', 'pec major', 'pec minor', 'rhomboid', 'rotator cuff', 
-                                    'spinal erectors', 'pectoral', 'trapizoids', 'teres major', 'teres minor', 'serratus anterior')
+COMMON_WORKOUT_KEYWORDS: tuple[str] = ('leg','legs', 'chest', 'back', 'arm', 'arms', 'shoulder', 'shoulers,', 
+                                       'biceps', 'triceps', 'glute', 'glutes', 'gluteus maximus', 'gluteus medius', 
+                                       'quad', 'quads', 'hamstring', 'hamstrings', 'calf', 'calves', 'delts', 'front delts', 
+                                       'side delts', 'rear delts', 'trap', 'traps', 'lat', 'lats', 'ab', 'abs', 'abdominal',
+                                       'abdominals', 'adductor', 'adductors', 'abductor', 'abductors' 'forearm', 'forearms', 
+                                       'brachialis', 'oblique', 'obliques', 'core', 'pecs', 'pec major', 'pec minor',
+                                       'pectoral', 'trapizoids', 'teres major', 'teres minor', 'serratus anterior')
