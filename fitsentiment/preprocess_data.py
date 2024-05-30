@@ -1,41 +1,53 @@
 
-import re
+import emoji
 import pandas as pd
-from constants.constants import TEST_CORPUS
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
-from nltk.tokenize import word_tokenize, sent_tokenize
 
-def preprocess_data(corpus):
+def preprocess_data(corpus: list[str]):
+    # change the text corpus into a pandas DataFrame
+    df = pd.DataFrame(data=corpus, columns=['text'], dtype='string')
+    text = df['text']
+    
+    print()
+    print('================= before preprocessing =================')
+    print(text)
+    print()
+    
     # convert the text in the corpus to lowercases
-    corpus = corpus.str.lower()
+    text = text.str.lower()
+
     # removing punctuation from the corpus 
-    corpus = corpus.replace(r'[.,;:!\?"\'`]', '', regex=True)
+    text = text.replace(r'[.,;:!\?"\'`]', '', regex=True)
     # removing special characters from the corpus
-    corpus = corpus.replace(r'[@#\$%^&*\(\)\\/\+\-_=\\[\]\{\}<>]', '', regex=True)
+    text = text.replace(r'[@#\$%^&*\(\)\\/\+\-_=\\[\]\{\}<>]', '', regex=True)
+    
+     # changing emojis to their text form
+    text = text.apply(lambda x: emoji.demojize(x))
+    # removing : from the emojis
+    text = text.replace(r':', '', regex=True)
+    
     # removing links from the corpus
-    corpus = corpus.replace(r'http\S+|www\.\S+', '', regex=True)
+    text = text.replace(r'http\S+|www\.\S+', '', regex=True)
     # removing email addresses from the corpus
-    corpus = corpus.replace(r'\w+@\w+\.com', '', regex=True)
+    text = text.replace(r'\w+@\w+\.com', '', regex=True)
+    
     # removing stop words from the corpus
     stop_words = stopwords.words('english')
-    corpus = corpus.apply(lambda sentence: ' '.join(word for word in sentence.split() if word not in stop_words))
-
+    text = text.apply(lambda sentence: ' '.join(word for word in sentence.split() if word not in stop_words))
     # applying lemmatization
     word_net_lem = WordNetLemmatizer()
-    corpus = corpus.apply(lambda sentence: ' '.join(word_net_lem.lemmatize(word, 'v') for word in sentence.split()))
+    text = text.apply(lambda sentence: ' '.join(word_net_lem.lemmatize(word, 'v') for word in sentence.split()))
     
-    return corpus    
+    return text    
 
 # Usage example
-df = pd.DataFrame(data=TEST_CORPUS, columns=['text'], dtype='string')
-print('================= before preprocessing =================')
-print(df['text'])
-print()
 # print(df['text'].str.lower())
 #print(type(df['text']))
+TEST_CORPUS = ('😃 I wan\'t to use this so "bad" but I feel it should have a rest day Thursday then do the rest, do you think that will help you more?', 'You absolutely must incorporate squats into your leg workout as well as deadlifts (either also on leg day or on back day). Those are two of the three most important and effective lifts that hit well beyond your legs')
+text = preprocess_data(TEST_CORPUS)
 print('================= after preprocessing =================')
-new_corpus = preprocess_data(df['text'])
-print(new_corpus)
-print(new_corpus[5])
+
+print(text[0])
+print()
 
