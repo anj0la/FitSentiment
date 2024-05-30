@@ -9,6 +9,9 @@ Description:
 
 Functions:
     lemmatize_text(text: str) -> str: Lemmatizes each token in some text into its base form, using its POS tag.
+    
+Sources:
+    To create the lemmatize_text function, this Geeks for Geeks source was used as a guide: https://www.geeksforgeeks.org/python-lemmatization-approaches-with-examples/
 """
 from nltk.tokenize import word_tokenize
 from nltk import pos_tag

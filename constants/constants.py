@@ -14,6 +14,8 @@ Classes:
 """
 from dataclasses import dataclass
 
+# Class constants
+
 @dataclass(frozen=True)
 class REDDIT_SCRAPER_CONSTANTS:
     """
@@ -30,17 +32,11 @@ class REDDIT_SCRAPER_CONSTANTS:
     KEYWORDS_SPLITS: tuple[str] = ('workout split', 'training split', 'weekly split')
     KEYWORDS_TYPES_SPLITS: tuple[str] = ('push pull legs', 'upper lower', 'full body', 'body part split', 'phat', 'bro split', 'arnold split', 'hybrid split')
     SEARCH_QUERIES: tuple[str] = (' OR '.join(KEYWORDS_SPLITS), ' OR '.join(KEYWORDS_TYPES_SPLITS))
+    
 
-@dataclass(frozen=True)
-class SENITMENT_KEYWORDS:
-    WORKOUT_KEYWORDS: tuple[str] = (
-    'legs', 'chest', 'back', 'arms', 'shoulders', 'biceps', 'triceps',
-    'glutes', 'gluteus maximus', 'gluteus medius', 'quads', 'hamstrings', 'calves', 
-    'delts', 'front delts', 'side delts', 'rear delts', 'traps', 'lats', 'abs', 'abdominal', 'ab', 
-    'adductors', 'abductors', 'forearms', 'obliques', 'core', 
-    'pecs', 'pec major', 'pec minor', 'rhomboids', 'rotator cuff', 
-    'spinal erectors', 'pectorals', 'trapizoids', 'teres major', 'teres minor', 
-    'serratus anterior'
-)
-    POSITIVE_KEYWORDS: tuple[str] = ()
-    NEGATIVE_KEYWORDS: tuple[str] = ()
+# Regular Constants
+
+WORKOUT_KEYWORDS: tuple[str] = ('leg', 'chest', 'back', 'arm', 'shoulder', 'biceps', 'triceps', 'glute', 'gluteus maximus', 'gluteus medius', 
+                                    'quad', 'hamstring', 'calf', 'delts', 'front delts', 'side delts', 'rear delts', 'trap', 'lat', 'ab', 'abdominal', 
+                                    'ab', 'adductor', 'abductor', 'forearm', 'oblique', 'core', 'pecs', 'pec major', 'pec minor', 'rhomboid', 'rotator cuff', 
+                                    'spinal erectors', 'pectoral', 'trapizoids', 'teres major', 'teres minor', 'serratus anterior')

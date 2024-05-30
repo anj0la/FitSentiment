@@ -78,16 +78,3 @@ print()
 
 
 
-WORKOUT_KEYWORDS = [
-    'legs', 'chest', 'back', 'arms', 'shoulders', 'biceps', 'triceps',
-    'glutes', 'gluteus maximus', 'gluteus medius', 'quads', 'hamstrings', 'calves', 
-    'delts', 'front delts', 'side delts', 'rear delts', 'traps', 'lats', 'abs', 'abdominal', 'ab', 
-    'adductors', 'abductors', 'forearms', 'obliques', 'core', 
-    'pecs', 'pec major', 'pec minor', 'rhomboids', 'rotator cuff', 
-    'spinal erectors', 'pectorals', 'trapizoids', 'teres major', 'teres minor', 
-    'serratus anterior'
-]
-wnl = WordNetLemmatizer()
-lemm_workout = [wnl.lemmatize(word) for word in WORKOUT_KEYWORDS]
-
-print(lemm_workout)
