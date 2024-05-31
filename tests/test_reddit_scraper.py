@@ -14,7 +14,7 @@ Functions:
 """
 from unittest import mock
 from unittest.mock import MagicMock
-from fitsentiment.reddit_scraper import scrape_comments, _get_comments
+from fitsentiment.reddit_scraper import RedditScraper
 from constants.test_constants import REDDIT_SCRAPER_RESPONSES
 from praw import models
 
@@ -38,18 +38,18 @@ def test_scrape_comments(connect_to_reddit_fn):
     SUBREDDITS = ['testsubreddit']
     SEARCH_QUERIES = ['testquery']
     
-    with mock.patch('constants.constants.REDDIT_SCRAPER_CONSTANTS.SUBREDDITS', SUBREDDITS), \
-        mock.patch('constants.constants.REDDIT_SCRAPER_CONSTANTS.SEARCH_QUERIES', SEARCH_QUERIES):
-    
-        # calling the function
-        comments = scrape_comments(limit=5)
+    # Instantiating the RedditScraper class
+    reddit_scraper = RedditScraper(subreddits=SUBREDDITS, search_queries=SEARCH_QUERIES, limit=5)
 
-        # assertions
-        reddit_fn.subreddit.assert_called_once_with('testsubreddit')
-        subreddit_fn.search.assert_called_once_with(query='testquery', sort='hot', limit=5)
-        assert len(comments) == REDDIT_SCRAPER_RESPONSES.LEN_CORPUS # equal to 2 (length of the comments)
-        assert comments[0] == REDDIT_SCRAPER_RESPONSES.TEST_CORPUS[0]
-        assert comments[1] == REDDIT_SCRAPER_RESPONSES.TEST_CORPUS[1]
+    # calling the function
+    comments = reddit_scraper.scrape_comments()
+
+    # assertions
+    reddit_fn.subreddit.assert_called_once_with('testsubreddit')
+    subreddit_fn.search.assert_called_once_with(query='testquery', sort='hot', limit=5)
+    assert len(comments) == REDDIT_SCRAPER_RESPONSES.LEN_CORPUS # equal to 2 (length of the comments)
+    assert comments[0] == REDDIT_SCRAPER_RESPONSES.TEST_CORPUS[0]
+    assert comments[1] == REDDIT_SCRAPER_RESPONSES.TEST_CORPUS[1]
         
 def test__get_comments():
     # create a mock submission with a mock comment forest
@@ -58,10 +58,13 @@ def test__get_comments():
     comment_fn.body = REDDIT_SCRAPER_RESPONSES.TEST_COMMENT
     submission_fn.comments.list.return_value = [comment_fn]
 
-    # calling the function
-    comments = _get_comments(submission_fn)
+    # Instantiating the RedditScraper class
+    reddit_scraper = RedditScraper(subreddits=[], search_queries=[], limit=0)
+
+    # Calling the private _get_comments method directly for testing
+    comments = reddit_scraper._get_comments(submission_fn)
 
     # assertions
-    assert len(comments) == REDDIT_SCRAPER_RESPONSES.LEN_CORPUS # equal to 2 (length of the comments)
+    assert len(comments) == REDDIT_SCRAPER_RESPONSES.LEN_CORPUS  # equal to 2 (length of the comments)
     assert comments[0] == REDDIT_SCRAPER_RESPONSES.TEST_SPLIT_COMMENT[0]
     assert comments[1] == REDDIT_SCRAPER_RESPONSES.TEST_SPLIT_COMMENT[1]

@@ -2,7 +2,7 @@
 File: reddit_scraper.py
 
 Author: Anjola Aina
-Date Modified: May 29th, 2024
+Date Modified: May 30th, 2024
 
 Description:
     This file contains all the necessary functions used to scrape relevant information from Reddit.
