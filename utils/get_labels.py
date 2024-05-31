@@ -6,7 +6,7 @@ Source: to help label the data to be positive, netural or negative: https://medi
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 from constants.test_constants import TEST_CORPUS
 
-def get_vader_sentiment(sentence):
+def _get_vader_sentiment(sentence):
     analyzer = SentimentIntensityAnalyzer()
     scores = analyzer.polarity_scores(sentence)
     if scores['compound'] >= 0.05:
@@ -19,7 +19,7 @@ def get_vader_sentiment(sentence):
 def define_labels(raw_corpus):
     labels = []
     for sentence in raw_corpus:
-        sentiment = get_vader_sentiment(sentence)
+        sentiment = _get_vader_sentiment(sentence)
         labels.append(sentiment)
     return labels
             
