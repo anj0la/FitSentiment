@@ -14,6 +14,8 @@ Classes:
 """
 from dataclasses import dataclass
 
+# Class constants
+
 @dataclass(frozen=True)
 class REDDIT_SCRAPER_CONSTANTS:
     """
@@ -28,5 +30,19 @@ class REDDIT_SCRAPER_CONSTANTS:
     """
     SUBREDDITS: tuple[str] = ('workout', 'WorkoutRoutines', 'loseit', 'bodybuilding', 'xxfitness', 'naturalbodybuilding')
     KEYWORDS_SPLITS: tuple[str] = ('workout split', 'training split', 'weekly split')
-    KEYWORDS_TYPES_SPLITS: tuple[str] = ('push pull legs', 'upper lower', 'full body', 'body part split', 'phat', 'bro split', 'arnold split', 'hybrid split')
-    SEARCH_QUERIES: tuple[str] = (' OR '.join(KEYWORDS_SPLITS), ' OR '.join(KEYWORDS_TYPES_SPLITS))
+    KEYWORDS_TRAINING_PREFERENCES: tuple[str] = ('favorite body part', 'favourite muscle group', 'favourite to train', 'most trained muscle group', 'training preferences')    
+    SEARCH_QUERIES: tuple[str] = (' OR '.join(KEYWORDS_SPLITS), ' OR '.join(KEYWORDS_TRAINING_PREFERENCES))
+    
+# Regular Constants
+
+# make class called Label Constants
+
+LOWER_BODY_PARTS = ('legs', 'leg', 'quads', 'quad', 'hamstrings', 'hamstring', 'glutes', 'glute', 'calves', 'calf', 'adductors', 'adductor', 'abductors', 'abductor')
+UPPER_BODY_PARTS = ('arms', 'arm', 'shoulders', 'shoulder', 'biceps', 'bicep', 'triceps', 'tricep', 'chest', 'forearms', 'forearm', 'delts', 'delt', 'back', 'lats', 'lat', 'traps', 'trap')
+CORE_PARTS = ('abs', 'abdominals', 'obliques', 'core')
+FULL_BODY_KEYWORDS = ('full', 'body' '3 days', '3 times', '3 day', '3 time')
+UPPER_LOWER_KEYWORDS = ('4 day', '4 time', '4 times', '4 days', 'upper lower')
+PUSH_PULL_LEGS_KEYWORDS = ('6 days', '6 times', '6 day', '6 time', 'push', 'pull', 'ppl')
+
+
+WORKOUT_CLASSES = ('full body', 'upper lower', 'push pull legs', 'lower body', 'upper body', 'general fitness')

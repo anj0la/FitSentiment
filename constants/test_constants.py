@@ -15,7 +15,7 @@ from dataclasses import dataclass
 
 TEST_CORPUS: tuple[str] = ('I want to use this so bad but I feel it should have a rest day Thursday then do the rest, do you think that will help you more?', 'You absolutely must incorporate squats into your leg workout as well as deadlifts (either also on leg day or on back day). Those are two of the three most important and effective lifts that hit well beyond your legs')
 
-@dataclass()
+@dataclass(frozen=True)
 class REDDIT_SCRAPER_RESPONSES:
     """
     This test data class contains all of the constants related to the Reddit scraper. The attributes are immutable,
