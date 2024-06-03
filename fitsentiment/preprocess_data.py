@@ -2,7 +2,7 @@
 File: preprocess_data.py
 
 Author: Anjola Aina
-Date Modified: June 2nd, 2024
+Date Modified: June 3rd, 2024
 
 Description:
     This file contains all the necessary functions used to preprocess relevant data about fitness.
@@ -11,6 +11,7 @@ Description:
 Functions:
     fit(corpus: list[str]) -> pd.Dataframe: Removes punctuation and special characters, tokenizes data, and extracs features from the corpus.
 """
+
 import torch
 import emoji
 import pandas as pd
@@ -33,6 +34,7 @@ class TextPipeline:
     Public Functions:
         fit(self, str): -> DataFrame
     """
+    
     def __init__(self):
         self.stop_words = set(stopwords.words('english'))
         self.vectorizer = TfidfVectorizer()
@@ -64,12 +66,12 @@ class TextPipeline:
         return data.values
 
     def _tokenize_data(self, data: list[str]) -> tuple[list[list[str]], dict]:
-        self.vectorizer.fit(data)
-        vocab = self.vectorizer.vocabulary_
-        
         token_vectors = []
         for sentence in data:
             token_vectors.extend([word_tokenize(term) for term in sent_tokenize(sentence)])
+            
+        all_tokens = [token for vector in token_vectors for token in vector]
+        vocab = {token: idx for idx, token in enumerate(set(all_tokens))}
             
         return token_vectors, vocab        
             
@@ -128,11 +130,14 @@ class TextPipeline:
         # processing, tokenizing and labelling the data
         preprocessed_data = self._preprocess_data(corpus=corpus)
         tokenized_data, vocab = self._tokenize_data(data=preprocessed_data)
+        print(tokenized_data)
         labels = self._label_data(token_vectors=tokenized_data)
         
         # encoding the token vectors and labels
         encoded_vectors = self._encode_tokens(token_vectors=tokenized_data, vocab=vocab)
         encoded_labels = self._encode_labels(labels=labels)
+        
+        print(f'workout classes: {WORKOUT_CLASSES} \n, labels: {labels} \n, encoded_labels: {encoded_labels}')
         
         # padding to ensure inputs to ml are the same length
         padded_vectors = self._pad_vectors(encoded_vectors=encoded_vectors)
@@ -147,9 +152,19 @@ class TextPipeline:
     
 # Usage 
 text_pipeline = TextPipeline()
-
-TEST_CORPUS: tuple[str] = ('I want to use this so bad but I feel it should have a rest day Thursday then do the rest, do you think that will help you more?', 'You absolutely must incorporate squats into your leg workout as well as deadlifts (either also on leg day or on back day). Those are two of the three most important and effective lifts that hit well beyond your legs')
-feat, voc = text_pipeline.fit(TEST_CORPUS)
+random_corpus = [
+    "I want to workout 3 times a week. What are exercises I can do? Currently I just do bodyweight squats and lunges for my legs, russian twists for abs, and then shoulder presses for arms.",
+    "What exercises should I do on my push days?",
+    "I only work my legs, so I do squats, hip thrusts, and rdls.",
+    "What should I do to increase my running?",
+    "I did a full body workout today, including bench press, squats, deadlifts, and shoulder press.",
+    "Today is my upper body workout. I'll focus on bench press, pull-ups, and bicep curls.",
+    "Leg day today! Time for squats, lunges, and leg press.",
+    "I'm doing a push-pull-legs split. Today is push day, so I'll focus on chest and triceps exercises.",
+    "I'm focusing on my upper body strength this month. Lots of bench press, rows, and overhead press.",
+    "My routine includes exercises for all muscle groups. Squats, bench press, pull-ups, and deadlifts are staples.",
+]
+feat, voc = text_pipeline.fit(random_corpus)
 print('features: ', feat)
 print()
 print('vocab: ', voc)

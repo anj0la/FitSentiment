@@ -7,11 +7,8 @@ Date Modified: May 29th, 2024
 Description:
     This file contains all the necessary functions to test the functionality of the reddit scraper.
     Currently, the test file has a coverage of 100%.
-
-Functions:
-    test_scrape_comments: Tests the scrape function by mocking the reddit, subreddit, and submission instances.
-    test__get_comments: Tests the get comments function by mocking the submission and comments.
 """
+
 from unittest import mock
 from unittest.mock import MagicMock
 from fitsentiment.reddit_scraper import RedditScraper

@@ -40,9 +40,9 @@ class REDDIT_SCRAPER_CONSTANTS:
 LOWER_BODY_PARTS = ('legs', 'leg', 'quads', 'quad', 'hamstrings', 'hamstring', 'glutes', 'glute', 'calves', 'calf', 'adductors', 'adductor', 'abductors', 'abductor')
 UPPER_BODY_PARTS = ('arms', 'arm', 'shoulders', 'shoulder', 'biceps', 'bicep', 'triceps', 'tricep', 'chest', 'forearms', 'forearm', 'delts', 'delt', 'back', 'lats', 'lat', 'traps', 'trap')
 CORE_PARTS = ('abs', 'abdominals', 'obliques', 'core')
-FULL_BODY_KEYWORDS = ('3 days', '3 times', '3 day', '3 time')
+FULL_BODY_KEYWORDS = ('full', 'body' '3 days', '3 times', '3 day', '3 time')
 UPPER_LOWER_KEYWORDS = ('4 day', '4 time', '4 times', '4 days', 'upper lower')
-PUSH_PULL_LEGS_KEYWORDS = ('6 days', '6 times', '6 day', '6 time', 'push', 'pull', 'push pull legs', 'push pull leg', 'ppl')
+PUSH_PULL_LEGS_KEYWORDS = ('6 days', '6 times', '6 day', '6 time', 'push', 'pull', 'ppl')
 
 
 WORKOUT_CLASSES = ('full body', 'upper lower', 'push pull legs', 'lower body', 'upper body', 'general fitness')
