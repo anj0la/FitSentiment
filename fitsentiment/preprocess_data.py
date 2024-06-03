@@ -11,6 +11,7 @@ Description:
 Functions:
     fit(corpus: list[str]) -> pd.Dataframe: Removes punctuation and special characters, tokenizes data, and extracs features from the corpus.
 """
+import torch
 import emoji
 import pandas as pd
 from nltk.corpus import stopwords
@@ -102,33 +103,49 @@ class TextPipeline:
                 classes.append(WORKOUT_CLASSES[5])  # if none of the above cases match, assume it is general fitness
         return classes
 
-    def _extract_features(self, token_vectors: list[list[str]], labels: list[str]) -> pd.DataFrame:
+    def _extract_features(self, token_vectors: list[list[str]], labels: list[str]) -> list[tuple]:
         features = []
         for token_vector, label in zip(token_vectors, labels):
             features.append((token_vector, label))
         return features
     
-    def _encode_token(self, token_vector: list[str], vocab: dict):
+    def _encode_token(self, token_vector: list[str], vocab: dict) -> list:
             return [vocab[token] for token in token_vector]
         
-    def _encode_tokens(self, token_vectors: list[list[str]], vocab: dict):
+    def _encode_tokens(self, token_vectors: list[list[str]], vocab: dict) -> list[list]:
         return [self._encode_token(vector, vocab) for vector in token_vectors]
     
-    def _encode_labels(self, labels: list[str]):
+    def _encode_labels(self, labels: list[str]) -> list:
         return LabelEncoder().fit_transform(labels)
+    
+    def _pad_vectors(self, encoded_vectors: list[list]) -> list[list]:
+        max_length = max(len(vector) for vector in encoded_vectors)
+        padded_vectors = [vector + [0] * (max_length - len(vector)) for vector in encoded_vectors]
+        return padded_vectors
 
 
-    def fit(self, corpus: list[str]) -> pd.DataFrame:
+    def fit(self, corpus: list[str]) -> tuple[list[tuple], dict]:
+        # processing, tokenizing and labelling the data
         preprocessed_data = self._preprocess_data(corpus=corpus)
         tokenized_data, vocab = self._tokenize_data(data=preprocessed_data)
         labels = self._label_data(token_vectors=tokenized_data)
-        encoded_tokens = self._encode_tokens(token_vectors=tokenized_data, vocab=vocab)
+        
+        # encoding the token vectors and labels
+        encoded_vectors = self._encode_tokens(token_vectors=tokenized_data, vocab=vocab)
         encoded_labels = self._encode_labels(labels=labels)
-        features = self._extract_features(token_vectors=encoded_tokens, labels=encoded_labels)
+        
+        # padding to ensure inputs to ml are the same length
+        padded_vectors = self._pad_vectors(encoded_vectors=encoded_vectors)
+        
+        # converting to tensors (so input is compatiable)
+        input_tensors = torch.tensor(padded_vectors, dtype=torch.float32)
+        label_tensors = torch.tensor(encoded_labels, dtype=torch.long)
+        
+        # create (feature, target) pairs
+        features = self._extract_features(token_vectors=input_tensors, labels=label_tensors)
         return features, vocab
     
 # Usage 
-
 text_pipeline = TextPipeline()
 
 TEST_CORPUS: tuple[str] = ('I want to use this so bad but I feel it should have a rest day Thursday then do the rest, do you think that will help you more?', 'You absolutely must incorporate squats into your leg workout as well as deadlifts (either also on leg day or on back day). Those are two of the three most important and effective lifts that hit well beyond your legs')
