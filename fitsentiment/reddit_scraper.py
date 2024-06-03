@@ -28,7 +28,6 @@ class RedditScraper:
     Public Functions:
         scrape_comments(self, str): -> list
     """
-    
     def __init__(self, subreddits: list[str], search_queries: list[str], limit: int):
         self.reddit = connect_to_reddit()
         self.subreddits: list[str] = subreddits

@@ -1,3 +1,16 @@
+"""
+File: preprocess_data.py
+
+Author: Anjola Aina
+Date Modified: June 2nd, 2024
+
+Description:
+    This file contains all the necessary functions used to preprocess relevant data about fitness.
+    There is one public function, fit, which extracts features and the vocabulary from the corpus.
+
+Functions:
+    fit(corpus: list[str]) -> pd.Dataframe: Removes punctuation and special characters, tokenizes data, and extracs features from the corpus.
+"""
 import emoji
 import pandas as pd
 from nltk.corpus import stopwords
