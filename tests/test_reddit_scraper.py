@@ -58,10 +58,10 @@ def test__get_comments():
     comment_fn.body = REDDIT_SCRAPER_RESPONSES.TEST_COMMENT
     submission_fn.comments.list.return_value = [comment_fn]
 
-    # Instantiating the RedditScraper class
+    # instantiating the RedditScraper class
     reddit_scraper = RedditScraper(subreddits=[], search_queries=[], limit=0)
 
-    # Calling the private _get_comments method directly for testing
+    # calling the private _get_comments method directly for testing
     comments = reddit_scraper._get_comments(submission_fn)
 
     # assertions

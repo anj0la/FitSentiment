@@ -77,4 +77,4 @@ reddit_scraper = RedditScraper(subreddits=REDDIT_SCRAPER_CONSTANTS.SUBREDDITS, s
 corpus = reddit_scraper.scrape_comments()
 # print('corpus: ', corpus)
 print('corpus length: ', len(corpus))
-print('print a subset of the corpus \n\n', corpus[180:200])
+print('print a subset of the corpus \n\n', corpus[1:100])
