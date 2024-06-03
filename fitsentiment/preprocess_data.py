@@ -20,6 +20,17 @@ from utils.lemmatize_text import lemmatize_text
 from constants.constants import WORKOUT_CLASSES, UPPER_BODY_PARTS, LOWER_BODY_PARTS, CORE_PARTS, FULL_BODY_KEYWORDS, UPPER_LOWER_KEYWORDS, PUSH_PULL_LEGS_KEYWORDS
 
 class TextPipeline:
+    """
+    This class is used to create a text pipeline to transform the corpus into data that can be used for an input to a machine learning model. 
+    
+    Attributes:
+        stop_words (set[str]): The set of stop words to remove from the corpus.
+        vectorizer (TfidfVectorizer: The vectorizer, used to create the vocabulary from the corpus.
+        classes (tuple[str]): The classes that each submission will belong to.
+        
+    Public Functions:
+        fit(self, str): -> DataFrame
+    """
     def __init__(self):
         self.stop_words = set(stopwords.words('english'))
         self.vectorizer = TfidfVectorizer()
@@ -99,41 +110,6 @@ class TextPipeline:
 
     def fit(self, corpus: list[str]) -> pd.DataFrame:
         preprocessed_data = self._preprocess_data(corpus)
-        
-        print("\n================= after preprocessing =================\n")
-        print(preprocessed_data)
-        print()
-
         tokenized_data, vocab = self._tokenize_data(preprocessed_data)
-
-        print("================= after tokenizing =================\n")
-        print("tokenized data: ", tokenized_data)
-        print()
-        print("vocabulary: ", vocab)
-        print()
-
-        features = self._extract_features(preprocessed_data)
-
-        print("================= after feature extraction =================\n")
-        print(features)
-        print()
-
+        features = self._extract_features(tokenized_data)
         return features, vocab
-    
-
-
-# Usage example
-TEST_CORPUS = ('😃 I wan\'t to use this so "bad" but I feel it should have a rest day Thursday then do the rest, do you think that will help you more?', 'You absolutely must incorporate squats into your leg workout as well as deadlifts (either also on leg day or on back day). Those are two of the three most important and effective lifts that hit well beyond your legs')
-text_pipeline = TextPipeline()
-features, vocab = text_pipeline.fit(TEST_CORPUS)
-
-print('================= features  =================')
-
-print(features)
-print()
-
-print('================= vocab =================')
-
-print(vocab)
-print()
-
