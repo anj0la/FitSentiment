@@ -15,6 +15,7 @@ import emoji
 import pandas as pd
 from nltk.corpus import stopwords
 from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.preprocessing import LabelEncoder
 from nltk.tokenize import sent_tokenize, word_tokenize
 from utils.lemmatize_text import lemmatize_text
 from constants.constants import WORKOUT_CLASSES, UPPER_BODY_PARTS, LOWER_BODY_PARTS, CORE_PARTS, FULL_BODY_KEYWORDS, UPPER_LOWER_KEYWORDS, PUSH_PULL_LEGS_KEYWORDS
@@ -71,7 +72,7 @@ class TextPipeline:
             
         return token_vectors, vocab        
             
-    def _label_data(self, token_vectors):
+    def _label_data(self, token_vectors: list[list[str]]) -> list[str]:
         classes = []
         for token_vector in token_vectors:
         # initialize flags for each type of workout
@@ -101,15 +102,37 @@ class TextPipeline:
                 classes.append(WORKOUT_CLASSES[5])  # if none of the above cases match, assume it is general fitness
         return classes
 
-    def _extract_features(self, token_vectors: list[str]) -> pd.DataFrame:
+    def _extract_features(self, token_vectors: list[list[str]], labels: list[str]) -> pd.DataFrame:
         features = []
-        labels = self._label_data(token_vectors)
         for token_vector, label in zip(token_vectors, labels):
             features.append((token_vector, label))
         return features
+    
+    def _encode_token(self, token_vector: list[str], vocab: dict):
+            return [vocab[token] for token in token_vector]
+        
+    def _encode_tokens(self, token_vectors: list[list[str]], vocab: dict):
+        return [self._encode_token(vector, vocab) for vector in token_vectors]
+    
+    def _encode_labels(self, labels: list[str]):
+        return LabelEncoder().fit_transform(labels)
+
 
     def fit(self, corpus: list[str]) -> pd.DataFrame:
-        preprocessed_data = self._preprocess_data(corpus)
-        tokenized_data, vocab = self._tokenize_data(preprocessed_data)
-        features = self._extract_features(tokenized_data)
+        preprocessed_data = self._preprocess_data(corpus=corpus)
+        tokenized_data, vocab = self._tokenize_data(data=preprocessed_data)
+        labels = self._label_data(token_vectors=tokenized_data)
+        encoded_tokens = self._encode_tokens(token_vectors=tokenized_data, vocab=vocab)
+        encoded_labels = self._encode_labels(labels=labels)
+        features = self._extract_features(token_vectors=encoded_tokens, labels=encoded_labels)
         return features, vocab
+    
+# Usage 
+
+text_pipeline = TextPipeline()
+
+TEST_CORPUS: tuple[str] = ('I want to use this so bad but I feel it should have a rest day Thursday then do the rest, do you think that will help you more?', 'You absolutely must incorporate squats into your leg workout as well as deadlifts (either also on leg day or on back day). Those are two of the three most important and effective lifts that hit well beyond your legs')
+feat, voc = text_pipeline.fit(TEST_CORPUS)
+print('features: ', feat)
+print()
+print('vocab: ', voc)
