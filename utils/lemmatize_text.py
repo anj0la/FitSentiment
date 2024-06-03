@@ -45,19 +45,3 @@ def lemmatize_text(text):
     text_pos_tagged = pos_tag(word_tokenize(text))
     lemmatized_text = ' '.join(WordNetLemmatizer().lemmatize(word, _get_pos_tag(tag)) if _get_pos_tag(tag) else word for word, tag in text_pos_tagged)
     return lemmatized_text
-
-def lemmatize_word(token):
-    """
-    Lemmatizes a token in some text into its base form, using its POS tag, determined by a helper function to get the pos tag.
-
-    Args:
-        token (str): The token to be lemmatized.
-
-    Returns:
-        str: The lemmatized token.
-    """
-    token_pos_tagged = pos_tag([token])
-    lemmatized_token = WordNetLemmatizer().lemmatize(token, _get_pos_tag(token_pos_tagged)) if _get_pos_tag(token_pos_tagged) else token
-    return lemmatized_token
-
-print({lemmatize_text(cls) for cls in WORKOUT_CLASSES})
