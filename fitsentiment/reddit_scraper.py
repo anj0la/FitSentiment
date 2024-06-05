@@ -2,18 +2,20 @@
 File: reddit_scraper.py
 
 Author: Anjola Aina
-Date Modified: May 30th, 2024
+Date Modified: June 5th, 2024
 
-Description:
-    This file contains all the necessary functions used to scrape relevant information from Reddit.
-    There is one public function, scrape_comments, which uses a private function to grab comments from a specific submission (i.e., post) from a subreddit.
+This file contains all the necessary functions used to scrape relevant information from Reddit.
+NOTE: You only need run the scraper once to get new data and use it to train the mode, and a corpus of extracted data is already available in data/corpus.csv.
 
 Functions:
-    scrape_comments(int) -> list: Scrapes comments from specific subredits that are focused on workout splits.
+    scrape_comments(int) -> list[str]: Scrapes comments from specific subredits that are focused on workout splits.
+    run_scraper() -> None: Runs the reddit scraper, saving its information into a csv file to be futher processed.
 """
 from praw import models
 from fitsentiment.connector import connect_to_reddit
 from constants.constants import REDDIT_SCRAPER_CONSTANTS
+from utils.label_data import create_text_label_rows
+import csv
 
 class RedditScraper:
     """
@@ -27,7 +29,9 @@ class RedditScraper:
         
     Public Functions:
         scrape_comments(self, str): -> list
+        run_scraper() -> None
     """
+    
     def __init__(self, subreddits: list[str], search_queries: list[str], limit: int):
         self.reddit = connect_to_reddit()
         self.subreddits: list[str] = subreddits
@@ -68,12 +72,27 @@ class RedditScraper:
         comments = []
         submission.comments.replace_more(limit=None)
         for comment in submission.comments.list():
-            comments.extend(comment.body.split('\n\n'))
+            comments.append(comment.body)
         return comments
+    
+    def run_scraper(self, file_path: str) -> None:
+        """
+        Runs the Reddit scraper.
 
-# Usage example (TODO: delete later)
-reddit_scraper = RedditScraper(subreddits=REDDIT_SCRAPER_CONSTANTS.SUBREDDITS, search_queries=REDDIT_SCRAPER_CONSTANTS.SEARCH_QUERIES, limit=1)
-corpus = reddit_scraper.scrape_comments()
-# print('corpus: ', corpus)
-print('corpus length: ', len(corpus))
-print('print a subset of the corpus \n\n', corpus[1:100])
+        Args:
+            file_path (str): The pathname of the file to save the scraped information to.
+        """
+        corpus = self.scrape_comments()
+        print(len(corpus))
+        fields = ['text', 'label']
+        rows = create_text_label_rows(corpus=corpus)
+        with open(file_path, 'w') as csv_file:
+            writer = csv.DictWriter(csv_file, fieldnames=fields)
+            writer.writeheader()
+            writer.writerows(rows)
+            csv_file.close()  
+
+# Running the scraper 
+#file_path = 'data/corpus.csv'
+#reddit_scraper = RedditScraper(subreddits=REDDIT_SCRAPER_CONSTANTS.SUBREDDITS, search_queries=REDDIT_SCRAPER_CONSTANTS.SEARCH_QUERIES, limit=999)
+#reddit_scraper.run_scraper(file_path=file_path)
