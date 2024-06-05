@@ -2,14 +2,13 @@
 File: reddit_scraper.py
 
 Author: Anjola Aina
-Date Modified: May 30th, 2024
+Date Modified: June 5th, 2024
 
-Description:
-    This file contains all the necessary functions used to scrape relevant information from Reddit.
-    NOTE: You only need run the scraper once to get new data and use it to train the mode, and a corpus of extracted data is already available in data/corpus.csv.
+This file contains all the necessary functions used to scrape relevant information from Reddit.
+NOTE: You only need run the scraper once to get new data and use it to train the mode, and a corpus of extracted data is already available in data/corpus.csv.
 
 Functions:
-    scrape_comments(int) -> list: Scrapes comments from specific subredits that are focused on workout splits.
+    scrape_comments(int) -> list[str]: Scrapes comments from specific subredits that are focused on workout splits.
     run_scraper() -> None: Runs the reddit scraper, saving its information into a csv file to be futher processed.
 """
 from praw import models
@@ -32,6 +31,7 @@ class RedditScraper:
         scrape_comments(self, str): -> list
         run_scraper() -> None
     """
+    
     def __init__(self, subreddits: list[str], search_queries: list[str], limit: int):
         self.reddit = connect_to_reddit()
         self.subreddits: list[str] = subreddits
@@ -75,7 +75,7 @@ class RedditScraper:
             comments.append(comment.body)
         return comments
     
-    def run_scraper(self, file_path):
+    def run_scraper(self, file_path: str) -> None:
         """
         Runs the Reddit scraper.
 

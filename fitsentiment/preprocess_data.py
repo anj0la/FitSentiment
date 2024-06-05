@@ -4,14 +4,13 @@ File: preprocess_data.py
 Author: Anjola Aina
 Date Modified: June 3rd, 2024
 
-Description:
-    This file contains all the necessary functions used to preprocess relevant data about fitness.
-    There is one public function, fit, which extracts features and the vocabulary from the corpus.
+This file contains all the necessary functions used to preprocess relevant data about fitness.
+There is one public function, fit, which extracts features and the vocabulary from the corpus.
 
 Functions:
-    fit(corpus: list[str]) -> pd.Dataframe: Removes punctuation and special characters, tokenizes data, and extracs features from the corpus.
+    fit(pd.DataFrame) -> tuple[list[list[int]], list[int]]: Preprocesses, tokenizes, labels, and encodes the text data.
+    convert_to_csv(list[str] | list[int], list[str] | list[int], str) -> None: Converts the text data and their labels into a CSV file.
 """
-
 import csv
 import emoji
 import pandas as pd
@@ -42,6 +41,16 @@ class TextPipeline:
         self.vocab = None
 
     def _preprocess_data(self, df: pd.DataFrame) -> list[str]:
+        """
+        Preprocesses the text data by converting to lowercase, removing punctuation and special characters,
+        converting emojis to text, removing links and email addresses, and applying lemmatization.
+        
+        Args:
+            df (pd.DataFrame): The input DataFrame containing the text data.
+        
+        Returns:
+            list[str]: The preprocessed text data.
+        """
         data = df['text']
         
         # convert the text to lowercase
@@ -66,18 +75,39 @@ class TextPipeline:
         return data.values
 
     def _tokenize_data(self, data: list[str]) -> tuple[list[list[str]], dict]:
+        """
+        Tokenizes the text data into words and creates a vocabulary dictionary.
+        
+        Args:
+            data (list[str]): The preprocessed text data.
+        
+        Returns:
+            tuple: A tuple containing:
+                - list[list[str]]: The tokenized text data.
+                - dict: The vocabulary dictionary mapping tokens to indices.
+        """
         token_vectors = []
         for sentence in data:
             token_vectors.extend([word_tokenize(term) for term in sent_tokenize(sentence)])
             
         all_tokens = [token for vector in token_vectors for token in vector]
-        vocab = {token: idx for idx, token in enumerate(set(all_tokens))}
+        self.vocab = {token: idx for idx, token in enumerate(set(all_tokens))}
             
-        return token_vectors, vocab        
+        return token_vectors        
             
     def _label_data(self, token_vectors: list[list[str]]) -> list[str]:
+        """
+        Labels the tokenized text data based on the presence of specific keywords related to different workout classes.
+        
+        Args:
+            token_vectors (list[list[str]]): The tokenized text data.
+        
+        Returns:
+            list[str]: The labels for each token vector.
+        """
         classes = []
         for token_vector in token_vectors:
+            
         # initialize flags for each type of workout
             has_lower_body = any(part in token_vector for part in LOWER_BODY_PARTS)
             has_upper_body = any(part in token_vector for part in UPPER_BODY_PARTS)
@@ -103,25 +133,57 @@ class TextPipeline:
                 classes.append(WORKOUT_CLASSES[4])  # class 4 = upper body
             else:
                 classes.append(WORKOUT_CLASSES[5])  # if none of the above cases match, assume it is general fitness
+       
         return classes
 
-    def _extract_features(self, token_vectors: list[list[str]], labels: list[str]) -> list[tuple]:
-        features = []
-        for token_vector, label in zip(token_vectors, labels):
-            features.append((token_vector, label))
-        return features
-    
-    def _encode_token(self, token_vector: list[str], vocab: dict) -> list:
-            return [vocab[token] for token in token_vector]
+    def _encode_token(self, token_vector: list[str], vocab: dict) -> list[int]:
+        """
+        Encodes a token vector into a list of integers using the vocabulary dictionary.
         
-    def _encode_tokens(self, token_vectors: list[list[str]], vocab: dict) -> list[list]:
+        Args:
+            token_vector (list[str]): A tokenized sentence.
+            vocab (dict): The vocabulary dictionary.
+        
+        Returns:
+            list[int]: The encoded token vector.
+        """
+        return [vocab[token] for token in token_vector]
+        
+    def _encode_tokens(self, token_vectors: list[list[str]], vocab: dict) -> list[list[int]]:
+        """
+        Encodes multiple token vectors into lists of integers using the vocabulary dictionary.
+        
+        Args:
+            token_vectors (list[list[str]]): The tokenized text data.
+            vocab (dict): The vocabulary dictionary.
+        
+        Returns:
+            list[list[int]]: The encoded token vectors.
+        """
         return [self._encode_token(vector, vocab) for vector in token_vectors]
     
-    def _encode_labels(self, labels: list[str]) -> list:
+    def _encode_labels(self, labels: list[str]) -> list[int]:
+        """
+        Encodes labels into integer values using LabelEncoder.
+        
+        Args:
+            labels (list[str]): The labels for each token vector.
+        
+        Returns:
+            list[int]: The encoded labels.
+        """
         # use label_encoder.inverse_transform to decode the labels
         return LabelEncoder().fit_transform(labels)
     
-    def convert_to_csv(self, text, labels, file_path):
+    def convert_to_csv(self, text: list[str] | list[int], labels: list[str] | list[int], file_path: str) -> None:
+        """
+        Converts the text data and their labels into a CSV file.
+        
+        Args:
+            text (list[str] | list[int]): The text data.
+            labels (list[str] | list[int]): The labels for each piece of text.
+            file_path (str): The path to save the CSV file.
+        """
         fields = ['text', 'label']
         rows = []
         for sentence, label in zip(text, labels):
@@ -132,16 +194,27 @@ class TextPipeline:
             writer.writerows(rows)
             csv_file.close()  
 
-    def fit(self, df: pd.DataFrame) -> tuple[list[list[str]], dict]:
+    def fit(self, df: pd.DataFrame) -> tuple[list[list[int]], list[int]]:
+        """
+        Preprocesses, tokenizes, labels, and encodes the text data.
+        
+        Args:
+            df (pd.DataFrame): The input DataFrame containing the text data.
+        
+        Returns:
+            tuple: A tuple containing:
+                - list[list[int]]: The encoded token vectors.
+                - list[int]: The encoded labels.
+        """
         # processing, tokenizing and labelling the data
         preprocessed_data = self._preprocess_data(df=df)
-        tokenized_data, vocab = self._tokenize_data(data=preprocessed_data)
+        tokenized_data = self._tokenize_data(data=preprocessed_data)
         labels = self._label_data(token_vectors=tokenized_data)
         
         # encoding the token vectors and labels
-        encoded_vectors = self._encode_tokens(token_vectors=tokenized_data, vocab=vocab)
+        encoded_vectors = self._encode_tokens(token_vectors=tokenized_data, vocab=self.vocab)
         encoded_labels = self._encode_labels(labels=labels)
         
-        return encoded_vectors, encoded_labels, vocab
+        return encoded_vectors, encoded_labels
     
     
