@@ -1,14 +1,9 @@
 import torch
 import torch.nn as nn
 
-import torch.nn.functional as F
-import torch.optim as optim
-import pandas as pd
-from torch.utils.data import DataLoader, TensorDataset, random_split
-
 class LSTM(nn.Module):
     
-    def __init__(self, vocab_size: int, embedding_dim: int, lstm_hidden_dim: int, hidden_dims: list[int], output_dim: int, n_layers: int, dropout: int, batch_first=True, bidirectional=False):
+    def __init__(self, vocab_size: int, embedding_dim: int = 100, lstm_hidden_dim: int = 256, hidden_dims: list[int] = [128, 64, 32], output_dim: int = 1, n_layers: int = 2, dropout: int = 0.2, batch_first: bool = True, bidirectional = False):
         super(LSTM, self).__init__()
                 
         # embedding layer
@@ -39,11 +34,11 @@ class LSTM(nn.Module):
         # getting output from lstm
         packed_output, (hidden, cell) = self.lstm(packed_embeddings)
         
-        # getting last hidden state
-        last_hidden = hidden[-1]
+        # concatenating the last forward and backward hidden states
+        hidden = torch.cat((hidden[-2, :, :], hidden[-1, :, :]), dim=1)
         
         # passing hidden state through mlp
-        output = self.feed_forward(last_hidden)
+        output = self.feed_forward(hidden)
 
         return output
         
@@ -58,5 +53,3 @@ class LSTM(nn.Module):
         # output layer
         layers.append(nn.Linear(input_dim, output_layer))
         return nn.Sequential(*layers)
-
-# Usage

@@ -12,7 +12,7 @@ Functions:
     fit(corpus: list[str]) -> pd.Dataframe: Removes punctuation and special characters, tokenizes data, and extracs features from the corpus.
 """
 
-import torch
+import csv
 import emoji
 import pandas as pd
 from nltk.corpus import stopwords
@@ -39,9 +39,9 @@ class TextPipeline:
         self.stop_words = set(stopwords.words('english'))
         self.vectorizer = TfidfVectorizer()
         self.classes = WORKOUT_CLASSES
+        self.vocab = None
 
-    def _preprocess_data(self, corpus: list[str]) -> list[str]:
-        df = pd.DataFrame(data=corpus, columns=['text'], dtype='string')
+    def _preprocess_data(self, df: pd.DataFrame) -> list[str]:
         data = df['text']
         
         # convert the text to lowercase
@@ -118,53 +118,30 @@ class TextPipeline:
         return [self._encode_token(vector, vocab) for vector in token_vectors]
     
     def _encode_labels(self, labels: list[str]) -> list:
+        # use label_encoder.inverse_transform to decode the labels
         return LabelEncoder().fit_transform(labels)
     
-    def _pad_vectors(self, encoded_vectors: list[list]) -> list[list]:
-        max_length = max(len(vector) for vector in encoded_vectors)
-        padded_vectors = [vector + [0] * (max_length - len(vector)) for vector in encoded_vectors]
-        return padded_vectors
+    def convert_to_csv(self, text, labels, file_path):
+        fields = ['text', 'label']
+        rows = []
+        for sentence, label in zip(text, labels):
+            rows.append({'text': sentence, 'label': label})
+        with open(file_path, 'w') as csv_file:
+            writer = csv.DictWriter(csv_file, fieldnames=fields)
+            writer.writeheader()
+            writer.writerows(rows)
+            csv_file.close()  
 
-
-    def fit(self, corpus: list[str]) -> tuple[list[tuple], dict]:
+    def fit(self, df: pd.DataFrame) -> tuple[list[list[str]], dict]:
         # processing, tokenizing and labelling the data
-        preprocessed_data = self._preprocess_data(corpus=corpus)
+        preprocessed_data = self._preprocess_data(df=df)
         tokenized_data, vocab = self._tokenize_data(data=preprocessed_data)
-        print(tokenized_data)
         labels = self._label_data(token_vectors=tokenized_data)
         
         # encoding the token vectors and labels
         encoded_vectors = self._encode_tokens(token_vectors=tokenized_data, vocab=vocab)
         encoded_labels = self._encode_labels(labels=labels)
         
-        print(f'workout classes: {WORKOUT_CLASSES} \n, labels: {labels} \n, encoded_labels: {encoded_labels}')
-        
-        # padding to ensure inputs to ml are the same length
-        padded_vectors = self._pad_vectors(encoded_vectors=encoded_vectors)
-        
-        # converting to tensors (so input is compatiable)
-        input_tensors = torch.tensor(padded_vectors, dtype=torch.float32)
-        label_tensors = torch.tensor(encoded_labels, dtype=torch.long)
-        
-        # create (feature, target) pairs
-        features = self._extract_features(token_vectors=input_tensors, labels=label_tensors)
-        return features, vocab
+        return encoded_vectors, encoded_labels, vocab
     
-# Usage 
-text_pipeline = TextPipeline()
-random_corpus = [
-    "I want to workout 3 times a week. What are exercises I can do? Currently I just do bodyweight squats and lunges for my legs, russian twists for abs, and then shoulder presses for arms.",
-    "What exercises should I do on my push days?",
-    "I only work my legs, so I do squats, hip thrusts, and rdls.",
-    "What should I do to increase my running?",
-    "I did a full body workout today, including bench press, squats, deadlifts, and shoulder press.",
-    "Today is my upper body workout. I'll focus on bench press, pull-ups, and bicep curls.",
-    "Leg day today! Time for squats, lunges, and leg press.",
-    "I'm doing a push-pull-legs split. Today is push day, so I'll focus on chest and triceps exercises.",
-    "I'm focusing on my upper body strength this month. Lots of bench press, rows, and overhead press.",
-    "My routine includes exercises for all muscle groups. Squats, bench press, pull-ups, and deadlifts are staples.",
-]
-feat, voc = text_pipeline.fit(random_corpus)
-print('features: ', feat)
-print()
-print('vocab: ', voc)
+    

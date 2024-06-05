@@ -93,6 +93,6 @@ class RedditScraper:
             csv_file.close()  
 
 # Running the scraper 
-file_path = 'data/corpus.csv'
-reddit_scraper = RedditScraper(subreddits=REDDIT_SCRAPER_CONSTANTS.SUBREDDITS, search_queries=REDDIT_SCRAPER_CONSTANTS.SEARCH_QUERIES, limit=999)
-reddit_scraper.run_scraper(file_path=file_path)
+#file_path = 'data/corpus.csv'
+#reddit_scraper = RedditScraper(subreddits=REDDIT_SCRAPER_CONSTANTS.SUBREDDITS, search_queries=REDDIT_SCRAPER_CONSTANTS.SEARCH_QUERIES, limit=999)
+#reddit_scraper.run_scraper(file_path=file_path)
