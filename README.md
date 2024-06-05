@@ -27,18 +27,18 @@ PASSWORD=YOUR_PASSWORD
 Replace ~/.zshrc with the equivalent bash commands.
 
 
-5a. Open the shell profile.
+6. Open the shell profile.
 ```
 sudo nano ~/.zshrc
 ```
 
-5b. Add the directory to your PYTHONPATH.
+7. Add the directory to your PYTHONPATH.
 
 ```
 export PYTHONPATH="/path/to/your/project"
 ```
 
-5c. Save the file and exit the text editor. Then, run source ~/.zshrc to apply the change.
+8. Save the file and exit the text editor. Then, run source ~/.zshrc to apply the change.
 
 ```
 source ~/.zshrc
