@@ -40,5 +40,3 @@ Split the data into training and testing sets (e.g, 80% training, 20% testing), 
 | **Preprocess Data** | Convert text to lowercase. Remove punctuation and special characters. Remove stop words (e.g., ‘and’, ‘the’, ‘is’). Apply lemmatization to reduce words to their base form. Tokenize the text into words. | 05/30/2024     |
 | **Building the Classifier** | Build the LSTM model. Create the initial word embeddings of the input (represented in a numerical format). Create the LSTM layer. Create a feed-forward (MLP) network to add nonlinearities. | 06/05/2024     |
 | **Training and Evaluation** | Train the classifier. Evaluate the model using the testing data with metrics such as accuracy, precision, recall and F1 score. Save the best model. |                |
-
-To view the file, use the link: https://docs.google.com/document/d/1dKI85bHRNh7Tcon1mUkkQ7oQgoSkvmit08LQmu_dl1Q/edit?usp=sharing
