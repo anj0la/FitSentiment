@@ -1,13 +1,11 @@
 # FitSentiment
 
-## Overview
+FitSentiment is a project designed to analyze discussions about workout splits, determining which workout split has the most positive sentiments. This is done by using a custom text classifier to classify the text into 6 classes (lower body, upper body, full body, upper lower, push pull legs, and general fitness), and passing the classified text into a sentiment analyzer and counting the number of positive and negative sentiments for each class.
 
-FitSentiment is a text classifier designed to analyze discussions about workout splits.
-This project aimed to increase my understanding and knowledge of technologies used in neural networks and
-natural language processing techniques such as sklearn, nltk, and pytorch.
+## Background
 
-The model is based on an LSTM (long short-term memory), a type of RNN (recurrent neural network) that can handle long dependencies in sequences and tackles the 
-vanishing gradient problem, making it a neural network to be used for text classification problems.
+The model is based on an LSTM (long short-term memory) neural network, a type of RNN (recurrent neural network) that can handle long dependencies in sequences and tackles the 
+vanishing gradient problem, making it a neural network to be used for text classification problems. 
 
 The corpus was extracted by creating a scraper to scrape comments from subreddits on Reddit that were related to workout splits and weekly routines. The PRAW Reddit API wrapper
 was used for simple access to the Reddit API.
@@ -74,4 +72,4 @@ pip install -e .
 
 1. Adding more training data from other social media platforms, such as Twitter, Meta and YouTube.
 2. Collecting training data from various onlne bodybuilding / fitness forums.
-3. Creating a custom sentiment classifier.
+3. Creating a custom sentiment analysis classifier.
