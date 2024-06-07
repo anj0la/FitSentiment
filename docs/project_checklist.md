@@ -12,7 +12,7 @@ FitSentiment is a text classifier designed to analyze discussions about workout 
 Scrape posts and comments from the mentioned subreddits. These posts and comments create the training corpus for the classifier. To find the “best” training split, information will be extracted from the relevant subreddits about people’s weekly workout splits. Keywords such as ‘weekly split’, ‘workout split’, and ‘weekly workouts’ will be used to filter data from these subreddits to only focus on posts and comments related to them.
 
 ### 2. Label Data
-Label each post or comment with its corresponding sentiment: positive, negative, or neutral.
+Label each post or comment with its corresponding class: lower body, upper body, full body, upper lower, push pull legs or general fitness.
 
 ### 3. Preprocess Data
 Preprocess the data by completing the following steps:
