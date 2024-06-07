@@ -1,14 +1,10 @@
 # FitSentiment Project Checklist
 
-**Anjola Aina**
-
-**FitSentiment**
-
-**27 MAY 2024**
+**Date Created: May 27, 2024**
 
 ## Overview
 
-FitSentiment is a sentiment analysis classifier designed to analyze discussions about workout splits. It aims to understand public sentiment towards various weekly workout routines. The classifier will be trained using data from fitness-related subreddits such as r/bodyweightfitness, r/Running, r/Fitness, r/bodybuilding, and r/xxfitness.
+FitSentiment is a text classifier designed to analyze discussions about workout splits. It aims to understand public sentiment towards various weekly workout routines. The classifier is trained using data from fitness-related subreddits such as r/bodyweightfitness, r/Running, r/Fitness, r/bodybuilding, and r/xxfitness.
 
 ## The Steps
 
