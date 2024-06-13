@@ -271,7 +271,7 @@ def evaluate(model: LSTM, iterator: DataLoader, device: torch.device) -> tuple[f
         
         
 def train_loop(model: LSTM, train_iterator: DataLoader, test_iterator: DataLoader, device: torch.device, n_epochs: int = 10, 
-               lr: float = 0.4, weight_decay: float = 0.0, model_save_path: str = 'model/model_saved_weights.pt') -> None:
+               lr: float = 0.4, weight_decay: float = 0.0, model_save_path: str = 'model/saved_model.pt') -> None:
     """
     Train the model for multiple epochs and evaluate on the validation set.
 
@@ -298,31 +298,31 @@ def train_loop(model: LSTM, train_iterator: DataLoader, test_iterator: DataLoade
         # save the best model
         if test_loss < best_test_loss:
             best_test_loss = test_loss
-            torch.save(obj=model.state_dict(), f=model_save_path)
+            torch.save(obj=model, f=model_save_path)
         
         # printing metrics
         print(f'\t Epoch: {epoch + 1} out of {n_epochs}')
         print(f'\t Train Loss: {train_loss:.3f} | Train Acc: {train_accurary * 100:.2f}%')
         print(f'\t Valid Loss: {test_loss:.3f} | Valid Acc: {test_accurary * 100:.2f}%')
+        
+def train_model(input_file, output_file):
+    # preprocessing data and getting the vocab
+    vocab = preprocess_and_save_corpus(input_file=input_file, output_file=output_file)
 
-##### Running the code
+    # getting the dataloaders
+    train_dataloader, test_dataloader = create_dataloaders(file_path=output_file_path)
+
+    # defining the device
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    
+    # defining the model
+    model = LSTM(vocab_size=len(vocab)).to(device)
+
+    # running the train loop
+    train_loop(model=model, train_iterator=train_dataloader, test_iterator=test_dataloader, device=device)
+
+##### Running the code (use in the main function if no model exists)
 input_file_path = 'data/corpus.csv'
 output_file_path = 'data/corpus_clean.csv'
 
-# preprocessing data and getting the vocab
-vocab = preprocess_and_save_corpus(input_file=input_file_path, output_file=output_file_path)
-
-# getting the dataloaders
-train_dataloader, test_dataloader = create_dataloaders(file_path=output_file_path)
-
-# defining the device
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-print(device)
-
-# defining the model
-model = LSTM(vocab_size=len(vocab)).to(device)
-
-print(model)
-
-# running the train loop
-train_loop(model=model, train_iterator=train_dataloader, test_iterator=test_dataloader, device=device)
+train_model(input_file_path, output_file_path)
