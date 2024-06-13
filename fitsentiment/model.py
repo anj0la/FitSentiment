@@ -34,7 +34,7 @@ class LSTM(nn.Module):
         bidirectional (bool): If True, becomes a bidirectional LSTM. Default is True.
     """
     
-    def __init__(self, vocab_size: int, embedding_dim: int = 100, lstm_hidden_dim: int = 256, hidden_dims: list[int] = [128, 64, 32], output_dim: int = 1, n_layers: int = 2, dropout: int = 0.2, batch_first: bool = True, bidirectional = True):
+    def __init__(self, vocab_size: int, embedding_dim: int = 100, lstm_hidden_dim: int = 256, hidden_dim: int = 128, hidden_dims: list[int] = [128, 64, 32], output_dim: int = 6, n_layers: int = 2, dropout: int = 0.2, batch_first: bool = True, bidirectional = True):
         super(LSTM, self).__init__()
                 
         # embedding layer
@@ -44,8 +44,9 @@ class LSTM(nn.Module):
         self.lstm = nn.LSTM(input_size=embedding_dim, hidden_size=lstm_hidden_dim, num_layers=n_layers, batch_first=batch_first, dropout=dropout, bidirectional=bidirectional)
     
         # multi-layer perceptron
-        self.feed_forward = self._create_multi_layer_perceptron(lstm_hidden_dim=lstm_hidden_dim, hidden_dims=hidden_dims, output_layer=output_dim)
-        
+        #self.feed_forward = self._create_multi_layer_perceptron(lstm_hidden_dim=lstm_hidden_dim, hidden_dims=hidden_dims, output_layer=output_dim)
+        self.fc = nn.Linear(lstm_hidden_dim * 2, output_dim)
+                
     def forward(self, input_text, input_text_lengths):
         """
         Implements the forward pass for the LSTM model.
@@ -60,8 +61,11 @@ class LSTM(nn.Module):
         # embeeding layer
         embeddings = self.embedding(input_text) 
         
+        # temporarily move lengths to CPU
+        input_text_lengths_cpu = input_text_lengths.cpu()
+        
         # packed embeddings
-        packed_embeddings = nn.utils.rnn.pack_padded_sequence(input=embeddings, lengths=input_text_lengths, batch_first=True)
+        packed_embeddings = nn.utils.rnn.pack_padded_sequence(input=embeddings, lengths=input_text_lengths_cpu, batch_first=True, enforce_sorted=False)
         
         # lstm layer
         packed_output, (hidden, cell) = self.lstm(packed_embeddings)
@@ -70,8 +74,8 @@ class LSTM(nn.Module):
         hidden = torch.cat((hidden[-2, :, :], hidden[-1, :, :]), dim=1)
         
         # mlp layer (output is one neuron)
-        output = self.feed_forward(hidden)
-
+        output = self.fc(hidden)
+    
         return output
         
     def _create_multi_layer_perceptron(self, lstm_hidden_dim: int, hidden_dims: list[int], output_layer: int) -> nn.Sequential:
@@ -88,7 +92,7 @@ class LSTM(nn.Module):
         """
         layers = []
         # hidden layers
-        input_dim = lstm_hidden_dim
+        input_dim = lstm_hidden_dim * 2
         for hidden_dim in hidden_dims:
             layers.append(nn.Linear(input_dim, hidden_dim))
             layers.append(nn.ReLU())
