@@ -16,6 +16,7 @@ Functions:
 
 
 """
+import numpy as np
 import torch
 import pandas as pd
 import torch.nn as nn
@@ -76,7 +77,7 @@ def collate_batch(batch: tuple[list[int], int, int]) -> tuple[torch.Tensor, torc
     """
     sequences, labels, lengths = zip(*batch)
     sequences = [torch.tensor(seq, dtype=torch.long) for seq in sequences]
-    labels = torch.tensor(labels, dtype=torch.float32)
+    labels = torch.tensor(labels, dtype=torch.long)
     lengths = torch.tensor(lengths, dtype=torch.long)
     
     # pad sequences
@@ -113,6 +114,40 @@ def create_dataloaders(file_path: str, batch_size: int = 64, train_split: float 
 
     return train_dataloader, test_dataloader
 
+def custom_accuracy_score(y_true, y_pred):
+    """
+    Calculate the accuracy score for multiclass and multiclass-multioutput targets.
+    
+    Parameters:
+    y_true (array-like): Ground truth (correct) labels.
+    y_pred (array-like): Predicted labels, as returned by a classifier.
+    
+    Returns:
+    float: Accuracy score.
+    """
+    # Convert inputs to numpy arrays for easier manipulation
+    y_true = np.array(y_true)
+    y_pred = np.array(y_pred)
+    
+    # Check if the dimensions of the inputs match
+    if y_true.shape != y_pred.shape:
+        raise ValueError("Shape of y_true and y_pred do not match.")
+    
+    # If y_true and y_pred are 1D arrays (simple multiclass classification)
+    if y_true.ndim == 1:
+        correct_predictions = (y_true == y_pred).sum()
+        accuracy = correct_predictions / y_true.shape[0]
+    
+    # If y_true and y_pred are 2D arrays (multiclass-multioutput classification)
+    elif y_true.ndim == 2:
+        correct_predictions = (y_true == y_pred).all(axis=1).sum()
+        accuracy = correct_predictions / y_true.shape[0]
+    
+    else:
+        raise ValueError("Input arrays must be 1D or 2D.")
+    
+    return accuracy
+
 def train(model: LSTM, iterator: DataLoader, optimizer: optim.SGD, device: torch.device) -> tuple[float, float]:
     """
     Trains the model for one epoch.
@@ -129,7 +164,7 @@ def train(model: LSTM, iterator: DataLoader, optimizer: optim.SGD, device: torch
     """
     # initialize the epoch loss and accuracy for every epoch 
     epoch_loss = 0
-    epoch_accurary = 0
+    epoch_accuracy = 0
     
     # set the model in the training phase
     model.train()  
@@ -139,7 +174,8 @@ def train(model: LSTM, iterator: DataLoader, optimizer: optim.SGD, device: torch
         
         # getting the padded sequences, labels and lengths from batch 
         padded_sequences, labels, lengths = batch
-        
+        labels = labels.type(torch.LongTensor)   # casting to long
+
         # move to GPU
         padded_sequences = padded_sequences.to(device)
         labels = labels.to(device)
@@ -149,13 +185,18 @@ def train(model: LSTM, iterator: DataLoader, optimizer: optim.SGD, device: torch
         optimizer.zero_grad()   
                 
         # getting expected predictions
-        predictions = torch.round(model(padded_sequences, lengths).squeeze())
+        predictions = model(padded_sequences, lengths).squeeze()
+        predicted_classes = torch.argmax(predictions, dim=1).type(torch.LongTensor)
+    
+        # print('labels: ', labels)
+        # print('predictions: ', predictions)
+        # print('predicted classes: ', predicted_classes)
                 
         # computing the loss
         loss = F.cross_entropy(predictions, labels)        
         
         # computing metrics 
-        accurary = accuracy_score(y_true=labels.detach().numpy(), y_pred=predictions.detach().numpy())   
+        accuracy = custom_accuracy_score(y_true=labels.cpu().detach().numpy(), y_pred=predicted_classes.cpu().detach().numpy())   
         
         # backpropagating the loss and computing the gradients
         loss.backward()       
@@ -165,9 +206,9 @@ def train(model: LSTM, iterator: DataLoader, optimizer: optim.SGD, device: torch
         
         # incrementing the loss and accuracy
         epoch_loss += loss.item()  
-        epoch_accurary += accurary  
+        epoch_accuracy += accuracy  
         
-    return epoch_loss / len(iterator), epoch_accurary / len(iterator)
+    return epoch_loss / len(iterator), epoch_accuracy / len(iterator)
 
 def evaluate(model: LSTM, iterator: DataLoader, device: torch.device) -> tuple[float, float, float, float, float]:
     """
@@ -187,7 +228,7 @@ def evaluate(model: LSTM, iterator: DataLoader, device: torch.device) -> tuple[f
     """
     # initialize the epoch loss and accuracy for every epoch 
     epoch_loss = 0
-    epoch_accurary = 0
+    epoch_accuracy = 0
     epoch_precision = 0
     epoch_recall = 0
     epoch_f1_score = 0
@@ -202,34 +243,35 @@ def evaluate(model: LSTM, iterator: DataLoader, device: torch.device) -> tuple[f
             
             # getting the padded sequences, labels and lengths from batch 
             padded_sequences, labels, lengths = batch
-            
+                        
             # move to GPU
             padded_sequences = padded_sequences.to(device)
             labels = labels.to(device)
             lengths = lengths.to(device)
             
-            # getting expected predictions
-            predictions = torch.round(model(padded_sequences, lengths).squeeze())
+             # getting expected predictions
+            predictions = model(padded_sequences, lengths).squeeze()
+            predicted_classes = torch.argmax(predictions, dim=1).type(torch.LongTensor)
             
             # computing the loss
             loss = F.cross_entropy(predictions, labels)        
             
             # computing metrics 
-            accurary = accuracy_score(y_true=labels, y_pred=predictions)
-            precision, recall, f1_score, _ = precision_recall_fscore_support(y_true=labels, y_pred=predictions, average='weighted', zero_division=1)
+            accuracy = custom_accuracy_score(y_true=labels.cpu(), y_pred=predicted_classes.cpu())
+           # precision, recall, f1_score, _ = precision_recall_fscore_support(y_true=labels, y_pred=predictions, average='weighted', zero_division=1)
             
             # keeping track of metrics
             epoch_loss += loss.item()
-            epoch_accurary += accurary
-            epoch_precision += precision
-            epoch_recall += recall
-            epoch_f1_score += f1_score
+            epoch_accuracy += accuracy
+            #epoch_precision += precision
+            #epoch_recall += recall
+            #epoch_f1_score += f1_score
     
-    return epoch_loss / len(iterator), epoch_accurary / len(iterator), epoch_precision / len(iterator), epoch_recall / len(iterator), epoch_f1_score / len(iterator)
+    return epoch_loss / len(iterator), epoch_accuracy / len(iterator), epoch_precision / len(iterator), epoch_recall / len(iterator), epoch_f1_score / len(iterator)
         
         
 def train_loop(model: LSTM, train_iterator: DataLoader, test_iterator: DataLoader, device: torch.device, n_epochs: int = 10, 
-               lr: float = 0.2, weight_decay: float = 0.0, model_save_path: str = 'model/model_saved_weights.pt') -> None:
+               lr: float = 0.4, weight_decay: float = 0.0, model_save_path: str = 'model/model_saved_weights.pt') -> None:
     """
     Train the model for multiple epochs and evaluate on the validation set.
 
@@ -259,11 +301,9 @@ def train_loop(model: LSTM, train_iterator: DataLoader, test_iterator: DataLoade
             torch.save(obj=model.state_dict(), f=model_save_path)
         
         # printing metrics
-        print(f'\t Epoch: {epoch} out of {n_epochs}')
+        print(f'\t Epoch: {epoch + 1} out of {n_epochs}')
         print(f'\t Train Loss: {train_loss:.3f} | Train Acc: {train_accurary * 100:.2f}%')
         print(f'\t Valid Loss: {test_loss:.3f} | Valid Acc: {test_accurary * 100:.2f}%')
-        print(f'\t Precision: {precision:.2f} | Recall: {recall:.2f} | F1 Score: {f1_score:.2f}')
-
 
 ##### Running the code
 input_file_path = 'data/corpus.csv'
@@ -286,5 +326,3 @@ print(model)
 
 # running the train loop
 train_loop(model=model, train_iterator=train_dataloader, test_iterator=test_dataloader, device=device)
-
-
