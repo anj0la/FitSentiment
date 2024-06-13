@@ -39,4 +39,4 @@ Split the data into training and testing sets (e.g, 80% training, 20% testing), 
 | **Label Data**      | Automatically label each post or comment based on predefined keywords.                          | 06/02/2024     |
 | **Preprocess Data** | Convert text to lowercase. Remove punctuation and special characters. Remove stop words (e.g., ‘and’, ‘the’, ‘is’). Apply lemmatization to reduce words to their base form. Tokenize the text into words. | 05/30/2024     |
 | **Building the Classifier** | Build the LSTM model. Create the initial word embeddings of the input (represented in a numerical format). Create the LSTM layer. Create a feed-forward (MLP) network to add nonlinearities. | 06/05/2024     |
-| **Training and Evaluation** | Train the classifier. Evaluate the model using the testing data with metrics such as accuracy, precision, recall and F1 score. Save the best model. |                |
+| **Training and Evaluation** | Train the classifier. Evaluate the model using the testing data with metrics such as accuracy, precision, recall and F1 score. Save the best model. | 06/13/2024     |
