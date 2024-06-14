@@ -279,10 +279,10 @@ def train_loop(model: LSTM, train_iterator: DataLoader, test_iterator: DataLoade
         model (LSTM): The model to be trained.
         train_iterator (DataLoader): The DataLoader containing the training data.
         valid_iterator (DataLoader): The DataLoader containing the validation data.
-        n_epochs (int, optional): Number of epochs to train the model (default is 5).
-        lr (float, optional): Learning rate for the optimizer (default is 0.01).
-        weight_decay (float, optional): Weight decay for regularization (default is 0.0).
-        model_save_path (str, optional): Path to save the best model's weights (default is 'model/model_saved_weights.pt').
+        n_epochs (int, optional): Number of epochs to train the model. Ddefaults to 5.
+        lr (float, optional): Learning rate for the optimizer. Defaults to 0.01.
+        weight_decay (float, optional): Weight decay for regularization. Defaults to 0.0.
+        model_save_path (str, optional): Path to save the best model's weights. Defaults to 'model/saved_model.pt'.
     """
     best_test_loss = float('inf')
     optimizer = optim.SGD(params=model.parameters(), lr=lr, weight_decay=weight_decay)

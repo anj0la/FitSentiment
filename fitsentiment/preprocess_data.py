@@ -19,7 +19,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.preprocessing import LabelEncoder
 from nltk.tokenize import sent_tokenize, word_tokenize
 from utils.lemmatize_text import lemmatize_text
-from constants.constants import WORKOUT_CLASSES, UPPER_BODY_PARTS, LOWER_BODY_PARTS, CORE_PARTS, FULL_BODY_KEYWORDS, UPPER_LOWER_KEYWORDS, PUSH_PULL_LEGS_KEYWORDS
+from constants.constants import WORKOUT_CLASSES, WORKOUT_CLASSES_VOCAB, UPPER_BODY_PARTS, LOWER_BODY_PARTS, CORE_PARTS, FULL_BODY_KEYWORDS, UPPER_LOWER_KEYWORDS, PUSH_PULL_LEGS_KEYWORDS
 
 class TextPipeline:
     """
@@ -172,8 +172,7 @@ class TextPipeline:
         Returns:
             list[int]: The encoded labels.
         """
-        # use label_encoder.inverse_transform to decode the labels
-        return LabelEncoder().fit_transform(labels)
+        return [WORKOUT_CLASSES_VOCAB[label] for label in labels]
     
     def convert_to_csv(self, text: list[str] | list[int], labels: list[str] | list[int], file_path: str) -> None:
         """
@@ -194,6 +193,12 @@ class TextPipeline:
             writer.writerows(rows)
             csv_file.close()  
 
+    def process_data(self, df: pd.DataFrame) -> list[int]:
+        preprocessed_data = self._preprocess_data(df=df)
+        tokenized_data = self._tokenize_data(data=preprocessed_data)
+        encoded_vector = self._encode_token(token_vector=tokenized_data, vocab=self.vocab)
+        return encoded_vector
+    
     def fit(self, df: pd.DataFrame) -> tuple[list[list[int]], list[int]]:
         """
         Preprocesses, tokenizes, labels, and encodes the text data.
@@ -216,5 +221,3 @@ class TextPipeline:
         encoded_labels = self._encode_labels(labels=labels)
         
         return encoded_vectors, encoded_labels
-    
-    

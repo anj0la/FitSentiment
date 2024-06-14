@@ -46,3 +46,4 @@ PUSH_PULL_LEGS_KEYWORDS = ('6 days', '6 times', '6 day', '6 time', 'push', 'pull
 
 
 WORKOUT_CLASSES = ('full body', 'upper lower', 'push pull legs', 'lower body', 'upper body', 'general fitness')
+WORKOUT_CLASSES_VOCAB = {class_name: idx for idx, class_name in enumerate(WORKOUT_CLASSES)}
