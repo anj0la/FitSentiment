@@ -270,8 +270,8 @@ def evaluate(model: LSTM, iterator: DataLoader, device: torch.device) -> tuple[f
     return epoch_loss / len(iterator), epoch_accuracy / len(iterator), epoch_precision / len(iterator), epoch_recall / len(iterator), epoch_f1_score / len(iterator)
         
         
-def train_loop(model: LSTM, train_iterator: DataLoader, test_iterator: DataLoader, device: torch.device, n_epochs: int = 10, 
-               lr: float = 0.4, weight_decay: float = 0.0, model_save_path: str = 'model/saved_model.pt') -> None:
+def train_loop(model: LSTM, train_iterator: DataLoader, test_iterator: DataLoader, device: torch.device, n_epochs: int = 50, 
+               lr: float = 0.05, weight_decay: float = 0.0, model_save_path: str = 'model/saved_model.pt') -> None:
     """
     Train the model for multiple epochs and evaluate on the validation set.
 
