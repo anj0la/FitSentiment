@@ -28,9 +28,14 @@ class REDDIT_SCRAPER_CONSTANTS:
         KEYWORDS_TYPES_SPLITS (tuple[str]): The keywords to filter the search to Reddit posts related to specific types of workout splits.
         SEARCH_QUERIES (tuple[str]): The search queries to use to search the subreddits for posts and comments.
     """
-    SUBREDDITS: tuple[str] = ('workout', 'WorkoutRoutines', 'loseit', 'bodybuilding', 'xxfitness', 'naturalbodybuilding')
+    SUBREDDITS: tuple[str] = ('workout', 'WorkoutRoutines', 'gainit', 'bodybuilding', 'xxfitness', 'naturalbodybuilding')
     KEYWORDS_SPLITS: tuple[str] = ('workout split', 'training split', 'weekly split')
     KEYWORDS_TRAINING_PREFERENCES: tuple[str] = ('favorite body part', 'favourite muscle group', 'favourite to train', 'most trained muscle group', 'training preferences')    
+    KEYWORDS_GENERAL_WORKOUT = (
+    'workout', 'workout routine', 'strength training', 'hypertrophy', 'powerlifting', 'bodybuilding', 'crossfit', 
+    'HIIT', 'calisthenics', 'fitness journey','gym routine', 'exercise plan', 'muscle building', 'fat loss', 'endurance training',
+    'personal records', 'progressive overload', 'fitness goals', 'workout plan',
+    'gym equipment', 'training tips')
     SEARCH_QUERIES: tuple[str] = (' OR '.join(KEYWORDS_SPLITS), ' OR '.join(KEYWORDS_TRAINING_PREFERENCES))
     
 # Regular Constants
@@ -42,7 +47,7 @@ UPPER_BODY_PARTS = ('arms', 'arm', 'shoulders', 'shoulder', 'biceps', 'bicep', '
 CORE_PARTS = ('abs', 'abdominals', 'obliques', 'core')
 FULL_BODY_KEYWORDS = ('full', 'body' '3 days', '3 times', '3 day', '3 time')
 UPPER_LOWER_KEYWORDS = ('4 day', '4 time', '4 times', '4 days', 'upper lower')
-PUSH_PULL_LEGS_KEYWORDS = ('6 days', '6 times', '6 day', '6 time', 'push', 'pull', 'ppl')
+PUSH_PULL_LEGS_KEYWORDS = ('6 days', '6 times', '6 day', '6 time', 'push', 'pull', 'ppl', 'pplplr', 'pplppr')
 
 
 WORKOUT_CLASSES = ('full body', 'upper lower', 'push pull legs', 'lower body', 'upper body', 'general fitness')

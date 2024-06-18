@@ -32,11 +32,12 @@ class RedditScraper:
         run_scraper() -> None
     """
     
-    def __init__(self, subreddits: list[str], search_queries: list[str], limit: int):
+    def __init__(self, subreddits: list[str], search_queries: list[str], limit: int, keywords: list[str]):
         self.reddit = connect_to_reddit()
         self.subreddits: list[str] = subreddits
         self.search_queries: list[str] = search_queries
         self.limit: int = limit
+        self.keywords = keywords
         
     def scrape_comments(self, sort: str ='hot') -> list[str]:
         """
@@ -75,6 +76,22 @@ class RedditScraper:
             comments.append(comment.body)
         return comments
     
+    def filter_comments(self, comments: list[str]) -> list[str]:
+        """
+        Filters comments to include only those containing relevant keywords.
+
+        Args:
+            comments (list): A list of comments to filter.
+
+        Returns:
+            list: A list of filtered comments containing relevant keywords.
+        """
+        filtered_comments = []
+        for comment in comments:
+            if any(keyword in comment.lower() for keyword in self.keywords):
+                filtered_comments.append(comment)
+        return filtered_comments
+    
     def run_scraper(self, file_path: str) -> None:
         """
         Runs the Reddit scraper.
@@ -83,7 +100,8 @@ class RedditScraper:
             file_path (str): The pathname of the file to save the scraped information to.
         """
         corpus = self.scrape_comments()
-        print(len(corpus))
+        filtered_corpus = self.filter_comments(corpus)
+        print(len(filtered_corpus))
         fields = ['text', 'label']
         rows = create_text_label_rows(corpus=corpus)
         with open(file_path, 'w') as csv_file:

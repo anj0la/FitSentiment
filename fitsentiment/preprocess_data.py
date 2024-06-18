@@ -93,8 +93,8 @@ class TextPipeline:
         all_tokens = [token for vector in token_vectors for token in vector]
         self.vocab = {token: idx for idx, token in enumerate(set(all_tokens))}
             
-        return token_vectors        
-            
+        return token_vectors 
+                
     def _label_data(self, token_vectors: list[list[str]]) -> list[str]:
         """
         Labels the tokenized text data based on the presence of specific keywords related to different workout classes.
@@ -195,7 +195,9 @@ class TextPipeline:
 
     def process_data(self, df: pd.DataFrame) -> list[int]:
         preprocessed_data = self._preprocess_data(df=df)
-        tokenized_data = self._tokenize_data(data=preprocessed_data)
+        print('processed data: ', preprocessed_data)
+        tokenized_data = self._tokenize_data(data=preprocessed_data)[0]
+        print('tokenized data: ', tokenized_data)
         encoded_vector = self._encode_token(token_vector=tokenized_data, vocab=self.vocab)
         return encoded_vector
     
