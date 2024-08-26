@@ -1,4 +1,4 @@
-from constants.constants import WORKOUT_CLASSES, UPPER_BODY_PARTS, LOWER_BODY_PARTS, CORE_PARTS, FULL_BODY_KEYWORDS, UPPER_LOWER_KEYWORDS, PUSH_PULL_LEGS_KEYWORDS
+""" from constants.constants import WORKOUT_CLASSES, UPPER_BODY_PARTS, LOWER_BODY_PARTS, CORE_PARTS, FULL_BODY_KEYWORDS, UPPER_LOWER_KEYWORDS, PUSH_PULL_LEGS_KEYWORDS
 
 def _label_data(corpus: list[str]) -> list[str]:
         classes = []
@@ -38,3 +38,4 @@ def create_text_label_rows(corpus: list[str]) -> list[dict]:
     for sentence, label in zip(corpus, labels):
         rows.append({'text': sentence, 'label': label})
     return rows
+ """
