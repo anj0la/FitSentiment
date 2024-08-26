@@ -16,7 +16,8 @@ from nltk.corpus import stopwords
 from nltk.tokenize import sent_tokenize, word_tokenize
 from utils.lemmatize_text import lemmatize_text
 
-def _tokenize_data(cleaned_data: list[str]) -> tuple[list[list[str]], dict[str, int]]:
+# Normalize the text to remove variations of apostrophes and quotes
+def tokenize_data(cleaned_data: list[str]) -> tuple[list[list[str]], dict[str, int]]:
     """
     Tokenizes the text data into words and creates a vocabulary dictionary.
         
@@ -33,6 +34,7 @@ def _tokenize_data(cleaned_data: list[str]) -> tuple[list[list[str]], dict[str, 
         tokenized_data.extend([word_tokenize(term) for term in sent_tokenize(sentence)])
             
     all_tokens = [token for sentence in tokenized_data for token in sentence]
+    cleaned_tokens = [word.replace("'", "") for word in all_tokens]
     vocab = {token: idx for idx, token in enumerate(set(all_tokens))}
             
     return tokenized_data, vocab
@@ -82,14 +84,15 @@ def preprocess(file_path: str) -> tuple[list[list[str]], list[str]]:
     """
     df = pd.read_csv(file_path)
     data = df['text']
-    
+        
     # convert the text to lowercase
     data = data.str.lower()
-
+    
     # remove punctuation and special characters
     data = data.replace(r'[.,;:!\?"\'`]', '', regex=True)
     data = data.replace(r'[@#\$%^&*\(\)\\/\+\-_=\\[\]\{\}<>]', '', regex=True)
-        
+    data = data.replace(r'[‘’“”]', '', regex=True)
+    
     # convert emojis to text
     data = data.apply(lambda x: emoji.demojize(x))
     data = data.replace(r':', '', regex=True)
@@ -101,14 +104,13 @@ def preprocess(file_path: str) -> tuple[list[list[str]], list[str]]:
     # remove stop words and apply lemmatization
     stop_words = set(stopwords.words('english'))
     data = data.apply(lambda sentence: ' '.join(word for word in sentence.split() if word not in stop_words))
-    data = data.apply(lambda sentence: lemmatize_text(sentence))
-        
-    # tokenize the data and get the vocabulary
-    tokenized_data, vocab = _tokenize_data(cleaned_data=data.values) 
-        
-    return tokenized_data, vocab       
+    # data = data.apply(lambda sentence: lemmatize_text(sentence))
+            
+    return data.values  
 
 # Testing purposes
-tokenized_data, vocab = preprocess('data/test_corpus.csv')
-print(tokenized_data)
-print(vocab)
+preprocessed_data = preprocess('data/test_corpus.csv')
+tokenized_data, vocab = tokenize_data(cleaned_data=preprocessed_data)
+print('\n============================== TOKENIZED DATA ==============================\n')
+print(tokenized_data[:10])
+# print(vocab)
