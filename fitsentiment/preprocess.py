@@ -34,12 +34,11 @@ def tokenize_data(cleaned_data: list[str]) -> tuple[list[list[str]], dict[str, i
         tokenized_data.extend([word_tokenize(term) for term in sent_tokenize(sentence)])
             
     all_tokens = [token for sentence in tokenized_data for token in sentence]
-    cleaned_tokens = [word.replace("'", "") for word in all_tokens]
     vocab = {token: idx for idx, token in enumerate(set(all_tokens))}
             
     return tokenized_data, vocab
 
-def encode_token(tokenized_sentence: list[str], vocab: dict) -> list[int]:
+def _encode_token(tokenized_sentence: list[str], vocab: dict) -> list[int]:
     """
     Encodes a token vector into a list of integers using the vocabulary dictionary.
         
@@ -63,24 +62,20 @@ def encode_tokens(tokenized_data: list[list[str]], vocab: dict) -> list[list[int
     Returns:
         list[list[int]]: The encoded token vectors.
     """
-    return [encode_token(tokenized_sentence, vocab) for tokenized_sentence in tokenized_data]
+    return [_encode_token(tokenized_sentence, vocab) for tokenized_sentence in tokenized_data]
  
-def preprocess(file_path: str) -> tuple[list[list[str]], list[str]]:
+def preprocess(file_path: str) -> list[str]:
     """
-    This function preprocesses and tokenizes the text data, returning the tokenized data and the corresponding vocabulary.
+    This function preprocesses the text data, returning the processed data.
      
-    It preprocesses the text data by converting the text to lowercase and emojis to text, removing punctation, special characters,
+    It preprocesses the text data by converting the text to lowercase and emojis to text, removing punctuation, special characters,
     links, email addresses and applying lemmatization.
-    
-    The vocabulary is built during the tokenization process.
-    
+        
     Args:
         file_path (str): The file path containing the text data.
         
     Returns:
-        tuple: A tuple containing:
-            - list[list[str]]: The tokenized data.
-            - list[str]: The vocabulary.
+        list[str]: The cleaned data.
     """
     df = pd.read_csv(file_path)
     data = df['text']
@@ -110,7 +105,8 @@ def preprocess(file_path: str) -> tuple[list[list[str]], list[str]]:
 
 # Testing purposes
 preprocessed_data = preprocess('data/test_corpus.csv')
+print(preprocessed_data[:5])
 tokenized_data, vocab = tokenize_data(cleaned_data=preprocessed_data)
 print('\n============================== TOKENIZED DATA ==============================\n')
-print(tokenized_data[:10])
-# print(vocab)
+print(tokenized_data[:5])
+print(vocab)
