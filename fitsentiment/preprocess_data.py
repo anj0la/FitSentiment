@@ -2,10 +2,9 @@
 File: preprocess_data.py
 
 Author: Anjola Aina
-Date Modified: June 3rd, 2024
+Date Modified: August 26th, 2024
 
-This file contains all the necessary functions used to preprocess relevant data about fitness.
-There is one public function, fit, which extracts features and the vocabulary from the corpus.
+This file contains all the necessary functions used to preprocess the collected data.
 
 Functions:
     fit(pd.DataFrame) -> tuple[list[list[int]], list[int]]: Preprocesses, tokenizes, labels, and encodes the text data.
@@ -19,7 +18,6 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.preprocessing import LabelEncoder
 from nltk.tokenize import sent_tokenize, word_tokenize
 from utils.lemmatize_text import lemmatize_text
-from constants.constants import WORKOUT_CLASSES, UPPER_BODY_PARTS, LOWER_BODY_PARTS, CORE_PARTS, FULL_BODY_KEYWORDS, UPPER_LOWER_KEYWORDS, PUSH_PULL_LEGS_KEYWORDS
 
 class TextPipeline:
     """
@@ -94,47 +92,6 @@ class TextPipeline:
         self.vocab = {token: idx for idx, token in enumerate(set(all_tokens))}
             
         return token_vectors        
-            
-    def _label_data(self, token_vectors: list[list[str]]) -> list[str]:
-        """
-        Labels the tokenized text data based on the presence of specific keywords related to different workout classes.
-        
-        Args:
-            token_vectors (list[list[str]]): The tokenized text data.
-        
-        Returns:
-            list[str]: The labels for each token vector.
-        """
-        classes = []
-        for token_vector in token_vectors:
-            
-        # initialize flags for each type of workout
-            has_lower_body = any(part in token_vector for part in LOWER_BODY_PARTS)
-            has_upper_body = any(part in token_vector for part in UPPER_BODY_PARTS)
-            has_core = any(part == token_vector for part in CORE_PARTS) # ignores words like absolutely which has 'abs' in it
-            has_full_body_keywords = any(keyword in token_vector for keyword in FULL_BODY_KEYWORDS)
-            has_upper_lower_keywords = any(keyword in token_vector for keyword in UPPER_LOWER_KEYWORDS)
-            has_push_pull_legs_keywords = any(keyword in token_vector for keyword in PUSH_PULL_LEGS_KEYWORDS)
-            
-            # case one: full body (contains at least one lower and upper body part and core/full body keywords)
-            if (has_lower_body and has_upper_body and has_core) or has_full_body_keywords:
-                classes.append(WORKOUT_CLASSES[0])  # class 0 = full body
-            # case two: upper/lower split
-            elif has_upper_lower_keywords or (has_lower_body and has_upper_body):
-                classes.append(WORKOUT_CLASSES[1])  # class 1 = upper lower split
-            # case three: push/pull/legs
-            elif has_push_pull_legs_keywords: # change
-                classes.append(WORKOUT_CLASSES[2])  # class 2 = push pull legs
-            # case four: lower body
-            elif has_lower_body and not has_upper_body:
-                classes.append(WORKOUT_CLASSES[3])  # class 3 = lower body
-            # case five: upper body
-            elif has_upper_body and not has_lower_body:
-                classes.append(WORKOUT_CLASSES[4])  # class 4 = upper body
-            else:
-                classes.append(WORKOUT_CLASSES[5])  # if none of the above cases match, assume it is general fitness
-       
-        return classes
 
     def _encode_token(self, token_vector: list[str], vocab: dict) -> list[int]:
         """
@@ -209,12 +166,19 @@ class TextPipeline:
         # processing, tokenizing and labelling the data
         preprocessed_data = self._preprocess_data(df=df)
         tokenized_data = self._tokenize_data(data=preprocessed_data)
-        labels = self._label_data(token_vectors=tokenized_data)
+        # labels = self._label_data(token_vectors=tokenized_data)
         
         # encoding the token vectors and labels
-        encoded_vectors = self._encode_tokens(token_vectors=tokenized_data, vocab=self.vocab)
-        encoded_labels = self._encode_labels(labels=labels)
+        #encoded_vectors = self._encode_tokens(token_vectors=tokenized_data, vocab=self.vocab)
+        #encoded_labels = self._encode_labels(labels=labels)
+        return tokenized_data # placeholder for testing
         
-        return encoded_vectors, encoded_labels
+        # return encoded_vectors, encoded_labels
     
-    
+# Testing purposes
+df = pd.read_csv('data/corpus.csv')
+
+# preprocessing the corpus and encoding the text and labels
+text_pipeline = TextPipeline()
+tokenized_data = text_pipeline.fit(df)
+print(tokenized_data)
