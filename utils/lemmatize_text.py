@@ -17,7 +17,6 @@ from nltk.tokenize import word_tokenize
 from nltk import pos_tag
 from nltk.corpus import wordnet
 from nltk.stem import WordNetLemmatizer
-from constants.constants import WORKOUT_CLASSES
 
 def _get_pos_tag(nltk_tag):
     """
