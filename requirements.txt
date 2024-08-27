@@ -9,3 +9,4 @@ pytest
 wheel
 emoji
 setuptools
+fuzzywuzzy
