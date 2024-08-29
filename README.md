@@ -1,14 +1,15 @@
 # FitSentiment
 
-FitSentiment is a project designed to analyze discussions about workout splits, determining which workout split has the most positive sentiments. This is done by using a custom text classifier to classify the text into 6 classes (lower body, upper body, full body, upper lower, push pull legs, and general fitness), and passing the classified text into a sentiment analyzer and counting the number of positive and negative sentiments for each class.
+FitSentiment is a sentiment analysis tool designed to analyze discussions about calorie counting apps, identifying the features users care about and understanding the sentiment associated with those features. The classifier will process data from diet-related subreddits, focusing on popular apps like MyFitnessPal, LoseIt! and MacroFactor.
 
 ## Background
 
-The model is based on an LSTM (long short-term memory) neural network, a type of RNN (recurrent neural network) that can handle long dependencies in sequences and tackles the 
-vanishing gradient problem, making it a neural network to be used for text classification problems. 
+Features were extracted by creating a custom NER model. The NER Annotator for SpaCy was used to create training data for the custom NER model. The link to the tool is as follows: https://tecoholic.github.io/ner-annotator/
 
-The corpus was extracted by creating a scraper to scrape comments from subreddits on Reddit that were related to workout splits and weekly routines. The PRAW Reddit API wrapper
-was used for simple access to the Reddit API.
+The sentiment anaylsis model is based on an LSTM (long short-term memory) neural network, a type of RNN (recurrent neural network) that can handle long dependencies in sequences and tackles the 
+vanishing gradient problem, making it a solid neural network to be used for text classification and sentiment analysis problems. 
+
+The corpus was extracted by creating a scraper to scrape revelant comments from subreddits. The PRAW Reddit API wrapper was used for simple access to the Reddit API.
 
 ## Setting up the project
 
@@ -70,6 +71,5 @@ pip install -e .
 
 ## Possible Expansions
 
-1. Adding more training data from other social media platforms, such as Twitter, Meta and YouTube.
-2. Collecting training data from various onlne bodybuilding / fitness forums.
-3. Creating a custom sentiment analysis classifier.
+1. Visualizing the data by creating a dashboard via Streamlit, Flask or other resources.
+2. Adding more training data from other social media platforms, such as Twitter, Meta and YouTube.
