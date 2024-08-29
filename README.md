@@ -5,6 +5,7 @@ FitSentiment is a sentiment analysis tool designed to analyze discussions about 
 ## Background
 
 Extracting features was achieved by creating a custom NER model. The NER Annotator for SpaCy was used to create training data for the custom NER model. The link to the tool is as follows: https://tecoholic.github.io/ner-annotator/
+
 The sentiment anaylsis model is based on an LSTM (long short-term memory) neural network, a type of RNN (recurrent neural network) that can handle long dependencies in sequences and tackles the 
 vanishing gradient problem, making it a solid neural network to be used for text classification and sentiment analysis problems. 
 
