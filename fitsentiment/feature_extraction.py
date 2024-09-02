@@ -18,7 +18,25 @@ import spacy
 from spacy.tokens import DocBin
 from tqdm import tqdm
 
-def get_spacy_doc(log_file, data):
+def get_spacy_doc(log_file_path: str, data):
+    """
+    This function creates spaCy DocBin onjects from annotated data.
+    
+    It prepares data for training a custom NER model by transforming annotated data
+    into a format compatible with spaCy v3, creating Doc objects with character spans linked
+    to entities.
+    
+    Entity overlap is prevented to avoid training issues.
+    
+    Data issues are logged and captured in the log_file to aid with debugging and data quality assessment.
+
+    Args:
+        log_file_path (_type_): _description_
+        data (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
     # create a blank spaCy pipeline
     nlp = spacy.blank('en')
     db = DocBin()
@@ -29,7 +47,7 @@ def get_spacy_doc(log_file, data):
         annot = annot['entities']
         
         # extract entities from the annotations
-        ents = extract_entities(log_file, text, doc, annot)
+        ents = extract_entities(log_file_path, text, doc, annot)
         
         # attempt to label the text with the entities and add it to the docbin object
         try:
@@ -39,9 +57,12 @@ def get_spacy_doc(log_file, data):
             # no entities were extracted from the text, don't add this entity to the docbin object
             pass 
         
-def extract_entities(log_file, text, doc, annot):
+def extract_entities(log_file_path, text, doc, annot):
     ents = []
     ent_indices = []
+    
+    # open the log file for writing
+    f = open(file=log_file_path, mode='w') 
     
     for start, end, label in annot:
         # check if the current entity overlaps with any previously processed entity
@@ -61,8 +82,11 @@ def extract_entities(log_file, text, doc, annot):
         if not span:
             # log errors for annotations that couldn't be processed
             err_data = str([start, end]) + '    ' + str(text) + '\n'
-            log_file.write(err_data)
+            f.write(err_data)
         else:
             ents.append(span)
-  
+
+    # close the log file
+    f.close()
+    
     return ents
