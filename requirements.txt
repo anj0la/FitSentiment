@@ -9,4 +9,6 @@ pytest
 wheel
 emoji
 setuptools
-fuzzywuzzy
+spacy
+spacy-transformers
+tqdm
