@@ -10,11 +10,23 @@ respectively.
 
 The following source was used as a guide to build the NER model: https://medium.com/@mjghadge9007/building-your-own-custom-named-entity-recognition-ner-model-with-spacy-v3-a-step-by-step-guide-15c7dcb1c416
 
+To train the model, complete the following steps:
+    - Download the base_config file from the offical spaCy wesbite https://spacy.io/usage/training or use the base_config.cfg file provided in the project. 
+      Note that the base config file utilizes the GPU (transformer). If you only have a CPU, select the 'CPU' option in the website under 'Hardware'.
+    - Run the following command to initialize your config file, filling in the remaining defaults: python -m spacy init fill-config base_config.cfg config.cfg
+    - Add your data by calling the prepare_data_for_training function. This converts the annootations file to spaCy's binary .spacy format.
+    - Run the train command: python -m spacy train config.cfg --output ./output --paths.train ./train.spacy --paths.dev ./dev.spacy
+
+More detailed steps with pictures have been provided in the docs folder.
+
 Functions:
-    TODO: Populate this section with functions.
+    extract_entities(str, str, Doc, str) -> list
+    get_spacy_doc(str, str) -> DocBin
+    convert_and_split_annotations(str, str, str, str, float) -> None
 """
-import pandas as pd
+import json
 import spacy
+from sklearn.model_selection import train_test_split
 from spacy.tokens import DocBin, Doc
 from tqdm import tqdm
 
@@ -25,7 +37,6 @@ def extract_entities(path: str, text: str, doc: Doc, annot: str) -> list:
     Entity overlap is prevented to avoid training issues.
     
     Data issues are logged and captured in the log_file to aid with debugging and data quality assessment.
-
 
     Args:
         path (str): The path to the log file. 
@@ -106,5 +117,38 @@ def get_spacy_doc(path: str, data: str) -> DocBin:
         
     return db
 
-def prepare_data_for_training(json_file: str) -> None:
-    pass
+def convert_and_split_annotations(json_path: str, log_path: str, train_path: str = 'data/train_data.spacy', test_path: str = 'data/test_data.spacy', test_size: float = 0.2) -> None:
+    """
+    This function prepares the data for training by loading the JSON file containing annotations,
+    splitting it into training and testing sets, and converting the data to spaCy's binary .spacy format.
+    
+    Args:
+        json_path (str): The path to the JSON file.
+        log_path (str): The path to the log file.
+        train_path (str): The path to the train spaCy file. Defaults to data/train_data.spacy.
+        test_path (str): The path to the test spaCy file. Defaults to data/test_data.spacy.
+        test_size: The  proportion of the dataset to include in the test split. Defaults to 0.2 (20% of the data is used to test the model).
+
+    """
+    data = json.load(open(file=json_path, encoding='utf-8'))
+    # print(len(data))
+    train, test = train_test_split(data, test_size=test_size, random_state=42)
+    print(len((train)))
+    print(len(test))
+    
+    # create spaCy DocBin objects for training and testing data
+    db = get_spacy_doc(path=log_path, data=train)
+    db.to_disk(path=train_path)
+    
+    db = get_spacy_doc(path=log_path, data=test)
+    db.to_disk(path=test_path)
+    #print(data[0])
+    """ for text, annot in tqdm(data): # there's only one in data, though
+        annot = annot['entities']
+        print(f'\n\n text: {text}, annot: {annot}\n\n')
+        for start, end, label in annot:
+            print(f'\n\n start: {start}, end: {end}, label: {label}\n\n')
+         """
+    
+# Preparing the model for training 
+convert_and_split_annotations(json_path='data/annotations.json', log_path='data/log_file.txt')
