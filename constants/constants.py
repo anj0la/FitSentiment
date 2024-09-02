@@ -27,7 +27,7 @@ class REDDIT_SCRAPER_CONSTANTS:
         KEYWORDS_TYPES_SPLITS (tuple[str]): The keywords to filter the search to Reddit posts related to specific types of workout splits.
         SEARCH_QUERIES (tuple[str]): The search queries to use to search the subreddits for posts and comments.
     """
-    SUBREDDITS: tuple[str] = ('loseit', '1200isplenty', 'caloriecounting', 'cico', 'intermittentfasting', 'nutrition')
+    SUBREDDITS: tuple[str] = ('caloriecount', 'cico', 'loseit', 'intermittentfasting', '1200isplenty', 'nutrition')
     KEYWORDS_CALORIE_COUNTING: tuple[str] = ('calorie counting app', 'best calorie counting app', 'calorie count app', 'best app')    
     SEARCH_QUERIES: tuple[str] = (' OR '.join(KEYWORDS_CALORIE_COUNTING),)
     
