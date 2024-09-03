@@ -13,8 +13,7 @@ Functions:
 """
 from praw import models
 from fitsentiment.connector import connect_to_reddit
-from constants.constants import REDDIT_SCRAPER_CONSTANTS, KEYWORDS_APPS
-from fitsentiment.feature_context import FeatureContext
+from constants.constants import REDDIT_SCRAPER_CONSTANTS, KEYWORDS_APPS, KEYWORDS_FEATURES
 import csv
 
 class RedditScraper:
@@ -48,14 +47,14 @@ class RedditScraper:
             Returns:
                 list: A list of scraped comments from the specified subreddits.
         """
-        all_comments = [] # creates the training corpus
+        all_comments = [] # Stores all comments scraped from specificed subreddits
         for subreddit_name in self.subreddits:
             subreddit_instance = self.reddit.subreddit(subreddit_name)
-            # going through the search queries 
+            # Go through all the search queries to scrape comments
             for search_query in self.search_queries: 
                 for submission in subreddit_instance.search(query=search_query, sort=sort, limit=self.limit):
                     comments = self._get_comments(submission)
-                    # we extend the comment instead of appending it to keep the dimension of the list to one
+                    # Extend the corpus to keep the dimension of the list (1D list, where each element is a string)
                     all_comments.extend(comments)
         return all_comments 
     
@@ -72,22 +71,22 @@ class RedditScraper:
         comments = []
         submission.comments.replace_more(limit=None)
         for comment in submission.comments.list():
-            if any(keyword in comment.body for keyword in KEYWORDS_APPS):
+            if any(word in comment.body for word in KEYWORDS_APPS) and any(word in comment.body for word in KEYWORDS_FEATURES):
                 comments.append(comment.body)
         return comments
     
-    def run_scraper(self, file_path: str) -> None:
+    def run_scraper(self, path: str) -> None:
         """
         Runs the Reddit scraper.
 
         Args:
-            file_path (str): The pathname of the file to save the scraped information to.
+            path (str): The path name of the file to save the scraped information to.
         """
         corpus = self.scrape_comments()
         print(len(corpus))
         fields = ['text']
         rows = [{'text': sentence} for sentence in corpus]
-        with open(file_path, 'w', newline='', encoding='utf-8') as csv_file:
+        with open(path, 'w', newline='', encoding='utf-8') as csv_file:
             writer = csv.DictWriter(csv_file, fieldnames=fields)
             writer.writeheader()
             writer.writerows(rows)
@@ -96,4 +95,4 @@ class RedditScraper:
 # Running the scraper 
 file_path = 'data/corpus.csv'
 reddit_scraper = RedditScraper(subreddits=REDDIT_SCRAPER_CONSTANTS.SUBREDDITS, search_queries=REDDIT_SCRAPER_CONSTANTS.SEARCH_QUERIES, limit=999)
-reddit_scraper.run_scraper(file_path=file_path)
+reddit_scraper.run_scraper(path=file_path)
