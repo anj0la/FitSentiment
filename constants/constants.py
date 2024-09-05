@@ -28,7 +28,7 @@ class REDDIT_SCRAPER_CONSTANTS:
         SEARCH_QUERIES (tuple[str]): The search queries to use to search the subreddits for posts and comments.
     """
     SUBREDDITS: tuple[str] = ('caloriecount', 'cico', 'loseit', 'intermittentfasting', '1200isplenty', '1500isplenty', 'nutrition')
-    KEYWORDS_CALORIE_COUNTING: tuple[str] = ('calorie counting app', 'best calorie counting app', 'calorie count app', 'best app')    
+    KEYWORDS_CALORIE_COUNTING: tuple[str] = ('calorie', 'calorie count', 'app', 'calorie counting app', 'best calorie counting app', 'calorie count app', 'best app')    
     SEARCH_QUERIES: tuple[str] = (' OR '.join(KEYWORDS_CALORIE_COUNTING),)
     
 # Regular Constants
